@@ -1,0 +1,2256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Doji Strategy Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0515;
+            --bg-secondary: #110a1f;
+            --bg-tertiary: #1a1128;
+            --bg-card: #1f1733;
+            --bg-card-hover: #261d3d;
+            --purple-primary: #8b5cf6;
+            --purple-light: #a78bfa;
+            --purple-dark: #6d28d9;
+            --text-primary: #ffffff;
+            --text-secondary: #e0d5f7;
+            --text-muted: #9b8ac4;
+            --border-color: #2d1f47;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                /* Grid pattern */
+                linear-gradient(rgba(139, 92, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139, 92, 246, 0.03) 1px, transparent 1px),
+                /* Diagonal lines */
+                repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(139, 92, 246, 0.02) 35px, rgba(139, 92, 246, 0.02) 70px),
+                /* Radial glows */
+                radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(109, 40, 217, 0.12) 0%, transparent 40%),
+                /* Noise texture */
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+            background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            top: 10%;
+            right: -10%;
+            width: 500px;
+            height: 300px;
+            background-image: url("data:image/svg+xml,%3Csvg width='500' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.06' stroke='%238b5cf6' fill='none' stroke-width='2'%3E%3C!-- Candlestick chart pattern --%3E%3Cline x1='50' y1='150' x2='50' y2='120' /%3E%3Crect x='45' y='130' width='10' height='20' fill='%2310b981'/%3E%3Cline x1='50' y1='130' x2='50' y2='100' /%3E%3Cline x1='100' y1='160' x2='100' y2='180' /%3E%3Crect x='95' y='160' width='10' height='30' fill='%23ef4444'/%3E%3Cline x1='100' y1='190' x2='100' y2='210' /%3E%3Cline x1='150' y1='140' x2='150' y2='110' /%3E%3Crect x='145' y='120' width='10' height='20' fill='%2310b981'/%3E%3Cline x1='150' y1='120' x2='150' y2='90' /%3E%3Cline x1='200' y1='150' x2='200' y2='170' /%3E%3Crect x='195' y='150' width='10' height='25' fill='%23ef4444'/%3E%3Cline x1='200' y1='175' x2='200' y2='195' /%3E%3Cline x1='250' y1='130' x2='250' y2='100' /%3E%3Crect x='245' y='110' width='10' height='20' fill='%2310b981'/%3E%3Cline x1='250' y1='110' x2='250' y2='80' /%3E%3Cline x1='300' y1='140' x2='300' y2='165' /%3E%3Crect x='295' y='140' width='10' height='28' fill='%23ef4444'/%3E%3Cline x1='300' y1='168' x2='300' y2='190' /%3E%3Cline x1='350' y1='120' x2='350' y2='90' /%3E%3Crect x='345' y='100' width='10' height='20' fill='%2310b981'/%3E%3Cline x1='350' y1='100' x2='350' y2='70' /%3E%3Cline x1='400' y1='135' x2='400' y2='155' /%3E%3Crect x='395' y='135' width='10' height='24' fill='%23ef4444'/%3E%3Cline x1='400' y1='159' x2='400' y2='180' /%3E%3C!-- Chart lines --%3E%3Cpolyline points='50,130 100,175 150,120 200,160 250,110 300,152 350,100 400,145' stroke='%238b5cf6' stroke-width='1.5' fill='none' opacity='0.4'/%3E%3C/g%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 1;
+            transform: rotate(-5deg);
+        }
+        
+        body > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(31, 23, 51, 0.4);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 24px;
+            padding: 40px;
+            padding-top: 90px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.6),
+                inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            position: relative;
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(31, 23, 51, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: var(--text-primary);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            padding: 14px;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 
+                0 4px 16px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            z-index: 2000;
+            line-height: 1;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-btn:hover {
+            background: rgba(31, 23, 51, 0.5);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 6px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        
+        .menu-btn:active {
+            transform: scale(0.95);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.3),
+                inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            box-shadow: 2px 0 20px rgba(0,0,0,0.5);
+            z-index: 1999;
+            transition: left 0.3s ease;
+            overflow-y: auto;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .side-menu.open {
+            left: 0;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1998;
+            display: none;
+        }
+
+        .menu-overlay.open {
+            display: block;
+        }
+
+        .menu-header {
+            padding: 30px 20px 20px 20px;
+            background: linear-gradient(135deg, var(--purple-primary) 0%, var(--purple-dark) 100%);
+            color: white;
+        }
+
+        .menu-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .menu-subtitle {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .menu-items {
+            padding: 10px 0;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 1em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .menu-item:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .menu-item-icon {
+            font-size: 1.3em;
+            width: 30px;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 10px 20px;
+        }
+
+        .edit-controls {
+            display: none;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(251, 191, 36, 0.1);
+            border-radius: 10px;
+            border: 2px solid #f59e0b;
+        }
+
+        .edit-controls.active {
+            display: flex;
+        }
+
+        .emoji-toolbar {
+            display: none;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #f59e0b;
+            margin-bottom: 15px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .emoji-toolbar.active {
+            display: flex;
+        }
+
+        .emoji-btn {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+        }
+
+        .emoji-btn:hover {
+            border-color: #667eea;
+            background: var(--bg-tertiary);
+            transform: scale(1.1);
+        }
+
+        .emoji-btn svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .emoji-toolbar-label {
+            width: 100%;
+            font-size: 0.9em;
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .size-control {
+            width: 100%;
+            background: var(--bg-tertiary);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .size-label {
+            font-size: 0.85em;
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .size-value {
+            color: #667eea;
+            font-size: 1em;
+        }
+
+        .size-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        .size-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+
+        .save-btn, .cancel-btn, .undo-btn, .redo-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s;
+        }
+
+        .save-btn {
+            background: #10b981;
+            color: white;
+        }
+        
+        .save-btn:hover {
+            background: #059669;
+        }
+
+        .cancel-btn {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .cancel-btn:hover {
+            background: #4b5563;
+        }
+        
+        .undo-btn, .redo-btn {
+            background: var(--purple-primary);
+            color: white;
+        }
+        
+        .undo-btn:hover, .redo-btn:hover {
+            background: var(--purple-dark);
+        }
+        
+        .undo-btn:disabled, .redo-btn:disabled {
+            background: #4b5563;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        [contenteditable="true"] {
+            outline: 2px dashed #f59e0b;
+            padding: 5px;
+            border-radius: 4px;
+            background: rgba(251, 191, 36, 0.05);
+            cursor: move;
+        }
+
+        [contenteditable="true"]:focus {
+            cursor: text;
+        }
+
+        .dragging {
+            opacity: 0.4;
+        }
+
+        .drag-over {
+            outline: 3px solid #10b981 !important;
+            outline-offset: 4px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            font-size: 1.6em;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            font-family: 'DM Sans', sans-serif;
+            line-height: 1.3;
+            text-transform: uppercase;
+            font-size: 1.1em;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 35px;
+            font-size: 0.95em;
+            font-weight: 400;
+            letter-spacing: 0;
+        }
+
+        .question {
+            font-size: 1.15em;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 25px;
+            text-align: left;
+            line-height: 1.5;
+            letter-spacing: -0.02em;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 18px 24px;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 
+                0 4px 16px rgba(0, 0, 0, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.15);
+            position: relative;
+            text-align: left;
+            letter-spacing: -0.01em;
+        }
+
+        .scenario-label {
+            position: absolute;
+            top: 10px;
+            right: 14px;
+            font-size: 0.7em;
+            font-weight: 700;
+            opacity: 0.9;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-family: 'IBM Plex Mono', monospace;
+            letter-spacing: 0.5px;
+            z-index: 2;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 6px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 3px rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.3),
+                inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-green {
+            background: rgba(4, 120, 87, 0.4);
+            color: #d1fae5;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+        }
+        
+        .btn-green:hover {
+            background: rgba(4, 120, 87, 0.6);
+        }
+
+        .btn-red {
+            background: rgba(185, 28, 28, 0.4);
+            color: #fecaca;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+        }
+        
+        .btn-red:hover {
+            background: rgba(185, 28, 28, 0.6);
+        }
+
+        .btn-gray {
+            background: rgba(31, 23, 51, 0.4);
+            color: var(--text-secondary);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-gray:hover {
+            background: rgba(31, 23, 51, 0.6);
+        }
+
+        .btn-purple {
+            background: rgba(124, 58, 237, 0.4);
+            color: #e9d5ff;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+        }
+        
+        .btn-purple:hover {
+            background: rgba(124, 58, 237, 0.6);
+        }
+
+        .scenario-box {
+            background: rgba(31, 23, 51, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 28px;
+            border-radius: 16px;
+            margin-top: 25px;
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.1);
+        }
+            border-left: 5px solid #667eea;
+        }
+
+        .scenario-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            letter-spacing: -0.02em;
+        }
+
+        .success-rate {
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            border: 1px solid;
+            font-family: 'IBM Plex Mono', monospace;
+            letter-spacing: 0.3px;
+        }
+
+        .rate-likely {
+            background: rgba(16, 185, 129, 0.15);
+            color: #6ee7b7;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .rate-unlikely {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .rate-very-likely {
+            background: rgba(16, 185, 129, 0.15);
+            color: #6ee7b7;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .rate-should-work {
+            background: rgba(59, 130, 246, 0.15);
+            color: #93c5fd;
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .info-section {
+            margin: 25px 0;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-text {
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 18px;
+            font-size: 0.95em;
+        }
+
+        .tts-btn {
+            padding: 14px 22px;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95em;
+            background: rgba(31, 23, 51, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: var(--text-secondary);
+            width: 100%;
+            margin: 18px 0;
+            transition: all 0.2s;
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .tts-btn:hover {
+            background: rgba(31, 23, 51, 0.5);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 4px 16px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        
+        .tts-btn:active {
+            transform: scale(0.98);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.3),
+                inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-btn {
+            background: rgba(31, 23, 51, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: var(--text-secondary);
+            padding: 14px 24px;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 25px;
+            width: 100%;
+            transition: all 0.2s;
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .back-btn:hover {
+            background: rgba(31, 23, 51, 0.5);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: var(--text-primary);
+            box-shadow: 
+                0 4px 16px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        
+        .back-btn:active {
+            transform: scale(0.98);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.3),
+                inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .warning-box {
+            background: rgba(180, 83, 9, 0.25);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 18px;
+            border-radius: 16px;
+            margin-top: 20px;
+            border: 1.5px solid rgba(251, 191, 36, 0.3);
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(251, 191, 36, 0.15);
+        }
+
+        .warning-text {
+            color: #92400e;
+            font-weight: 600;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        small {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.85em;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .clock {
+            position: fixed;
+            top: 20px;
+            left: 90px;
+            background: rgba(31, 23, 51, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: var(--text-primary);
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-size: 1.05em;
+            font-weight: 600;
+            font-family: 'IBM Plex Mono', 'Courier New', monospace;
+            box-shadow: 
+                0 4px 16px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .clock.warning {
+            background: rgba(185, 28, 28, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: #fecaca;
+            animation: shake 0.3s ease-in-out infinite;
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 4px 16px rgba(185, 28, 28, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .clock.flash {
+            background: rgba(4, 120, 87, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: #d1fae5;
+            animation: flash 0.5s ease-in-out;
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 4px 16px rgba(4, 120, 87, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px) rotate(-1deg); }
+            75% { transform: translateX(3px) rotate(1deg); }
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .warning-text {
+            font-size: 0.85em;
+            font-weight: 700;
+            display: none;
+        }
+
+        .clock.warning .warning-text {
+            display: inline;
+        }
+        
+        /* Editable text improvements */
+        .editable {
+            position: relative;
+            cursor: default;
+        }
+        
+        .editable[contenteditable="true"] {
+            outline: 2px solid rgba(139, 92, 246, 0.4);
+            outline-offset: 3px;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 6px;
+            padding: 6px 8px;
+            min-height: 1.5em;
+            cursor: text !important;
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            transition: all 0.2s;
+        }
+        
+        .editable[contenteditable="true"]:hover {
+            outline-color: rgba(139, 92, 246, 0.6);
+            background: rgba(139, 92, 246, 0.08);
+        }
+        
+        .editable[contenteditable="true"]:focus {
+            outline: 2px solid var(--purple-primary);
+            outline-offset: 3px;
+            background: rgba(139, 92, 246, 0.12);
+        }
+        
+        .editable[contenteditable="true"] * {
+            cursor: text !important;
+        }
+        
+        /* Better text selection */
+        .editable[contenteditable="true"]::selection {
+            background: rgba(139, 92, 246, 0.3);
+            color: white;
+        }
+        
+        .editable[contenteditable="true"] *::selection {
+            background: rgba(139, 92, 246, 0.3);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="clock" id="liveClock">
+        <span id="timeDisplay">00:00:00 AM</span>
+        <span class="warning-text">Candle Closing</span>
+    </div>
+
+    <!-- Hamburger Menu Button -->
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <div class="menu-title">Dojo Guide</div>
+            <div class="menu-subtitle">Trading Strategy Tools</div>
+        </div>
+        <div class="menu-items">
+            <button class="menu-item" onclick="toggleEditMode(); toggleMenu();">
+                <span class="menu-item-icon">✏️</span>
+                <span>Edit Page</span>
+            </button>
+            <button class="menu-item" onclick="captureScreen(); toggleMenu();">
+                <span class="menu-item-icon">📸</span>
+                <span>Capture Screen</span>
+            </button>
+            <button class="menu-item" onclick="openInSafari(); toggleMenu();">
+                <span class="menu-item-icon">🌐</span>
+                <span>View in Safari</span>
+            </button>
+            <div class="menu-divider"></div>
+            <button class="menu-item" onclick="showScreen('start'); toggleMenu();">
+                <span class="menu-item-icon">🏠</span>
+                <span>Go to Start</span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="container">
+
+        <div class="edit-controls" id="editControls">
+            <button class="undo-btn" onclick="undoEdit()" id="undoBtn" disabled>↶ Undo</button>
+            <button class="redo-btn" onclick="redoEdit()" id="redoBtn" disabled>↷ Redo</button>
+            <button class="save-btn" onclick="saveChanges()">💾 Save Changes</button>
+            <button class="cancel-btn" onclick="cancelEdit()">✕ Cancel</button>
+        </div>
+
+        <div class="emoji-toolbar" id="emojiToolbar">
+            <div class="emoji-toolbar-label">Click to insert candles & lines:</div>
+            
+            <div class="size-control">
+                <div class="size-label">
+                    <span>Emoji Size</span>
+                    <span class="size-value" id="sizeValue">20px</span>
+                </div>
+                <input type="range" min="10" max="80" value="20" class="size-slider" id="sizeSlider" oninput="updateEmojiSize(this.value)">
+            </div>
+            
+            <!-- Doji Candle -->
+            <button class="emoji-btn" onclick="insertEmoji('doji')" title="Doji Candle">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="50" y1="10" x2="50" y2="47" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="35" y="48" width="30" height="4" fill="#a0aec0" rx="1"/>
+                    <rect x="35" y="48" width="30" height="4" fill="none" stroke="#718096" stroke-width="1.5" rx="1"/>
+                    <line x1="50" y1="52" x2="50" y2="90" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- Green Candle -->
+            <button class="emoji-btn" onclick="insertEmoji('green')" title="Green Candle">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="50" y1="10" x2="50" y2="30" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="35" y="30" width="30" height="45" fill="#48bb78" rx="3"/>
+                    <rect x="35" y="30" width="30" height="45" fill="none" stroke="#38a169" stroke-width="2" rx="3"/>
+                    <line x1="50" y1="75" x2="50" y2="90" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- Red Candle -->
+            <button class="emoji-btn" onclick="insertEmoji('red')" title="Red Candle">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="50" y1="10" x2="50" y2="25" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="35" y="25" width="30" height="50" fill="#fc8181" rx="3"/>
+                    <rect x="35" y="25" width="30" height="50" fill="none" stroke="#c53030" stroke-width="2" rx="3"/>
+                    <line x1="50" y1="75" x2="50" y2="90" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- Green Penetrating Blue Line -->
+            <button class="emoji-btn" onclick="insertEmoji('green-penetrating')" title="Green Penetrating Line">
+                <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="10" y1="60" x2="90" y2="60" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
+                    <line x1="50" y1="20" x2="50" y2="40" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="38" y="40" width="24" height="50" fill="#48bb78" rx="2"/>
+                    <rect x="38" y="40" width="24" height="50" fill="none" stroke="#38a169" stroke-width="2" rx="2"/>
+                    <line x1="50" y1="90" x2="50" y2="110" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- Green Below Blue Line -->
+            <button class="emoji-btn" onclick="insertEmoji('green-below')" title="Green Below Line">
+                <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="10" y1="30" x2="90" y2="30" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
+                    <line x1="50" y1="35" x2="50" y2="55" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="38" y="55" width="24" height="40" fill="#48bb78" rx="2"/>
+                    <rect x="38" y="55" width="24" height="40" fill="none" stroke="#38a169" stroke-width="2" rx="2"/>
+                    <line x1="50" y1="95" x2="50" y2="110" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- Red Below Blue Line -->
+            <button class="emoji-btn" onclick="insertEmoji('red-below')" title="Red Below Line">
+                <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="10" y1="30" x2="90" y2="30" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
+                    <line x1="50" y1="35" x2="50" y2="50" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="38" y="50" width="24" height="45" fill="#fc8181" rx="2"/>
+                    <rect x="38" y="50" width="24" height="45" fill="none" stroke="#c53030" stroke-width="2" rx="2"/>
+                    <line x1="50" y1="95" x2="50" y2="110" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- Green Wick Penetrating -->
+            <button class="emoji-btn" onclick="insertEmoji('green-wick-penetrating')" title="Green Wick Penetrating">
+                <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="10" y1="50" x2="90" y2="50" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
+                    <line x1="50" y1="25" x2="50" y2="60" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="38" y="60" width="24" height="35" fill="#48bb78" rx="2"/>
+                    <rect x="38" y="60" width="24" height="35" fill="none" stroke="#38a169" stroke-width="2" rx="2"/>
+                    <line x1="50" y1="95" x2="50" y2="110" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- Doji + Green Below Line -->
+            <button class="emoji-btn" onclick="insertEmoji('doji-green-below')" title="Doji + Green Below Line">
+                <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="10" y1="30" x2="110" y2="30" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
+                    <line x1="35" y1="35" x2="35" y2="52" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="27" y="53" width="16" height="3" fill="#a0aec0" rx="1"/>
+                    <rect x="27" y="53" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"/>
+                    <line x1="35" y1="56" x2="35" y2="75" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="75" y1="35" x2="75" y2="50" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="65" y="50" width="20" height="35" fill="#48bb78" rx="2"/>
+                    <rect x="65" y="50" width="20" height="35" fill="none" stroke="#38a169" stroke-width="2" rx="2"/>
+                    <line x1="75" y1="85" x2="75" y2="100" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- Doji + Red Below Line -->
+            <button class="emoji-btn" onclick="insertEmoji('doji-red-below')" title="Doji + Red Below Line">
+                <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="10" y1="30" x2="110" y2="30" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
+                    <line x1="35" y1="35" x2="35" y2="52" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="27" y="53" width="16" height="3" fill="#a0aec0" rx="1"/>
+                    <rect x="27" y="53" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"/>
+                    <line x1="35" y1="56" x2="35" y2="75" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="75" y1="35" x2="75" y2="48" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="65" y="48" width="20" height="38" fill="#fc8181" rx="2"/>
+                    <rect x="65" y="48" width="20" height="38" fill="none" stroke="#c53030" stroke-width="2" rx="2"/>
+                    <line x1="75" y1="86" x2="75" y2="100" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- Doji Wick at Line + Green Body Penetrating -->
+            <button class="emoji-btn" onclick="insertEmoji('doji-green-body-penetrating')" title="Doji at Line + Green Penetrating">
+                <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="10" y1="60" x2="110" y2="60" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
+                    <line x1="35" y1="60" x2="35" y2="72" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="27" y="73" width="16" height="3" fill="#a0aec0" rx="1"/>
+                    <rect x="27" y="73" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"/>
+                    <line x1="35" y1="76" x2="35" y2="95" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="75" y1="25" x2="75" y2="45" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="65" y="45" width="20" height="40" fill="#48bb78" rx="2"/>
+                    <rect x="65" y="45" width="20" height="40" fill="none" stroke="#38a169" stroke-width="2" rx="2"/>
+                    <line x1="75" y1="85" x2="75" y2="105" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- Doji Wick at Line + Green Wick Penetrating -->
+            <button class="emoji-btn" onclick="insertEmoji('doji-green-wick-penetrating')" title="Doji at Line + Green Wick Penetrating">
+                <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="10" y1="60" x2="110" y2="60" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
+                    <line x1="35" y1="60" x2="35" y2="72" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="27" y="73" width="16" height="3" fill="#a0aec0" rx="1"/>
+                    <rect x="27" y="73" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"/>
+                    <line x1="35" y1="76" x2="35" y2="95" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="75" y1="35" x2="75" y2="65" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="65" y="65" width="20" height="30" fill="#48bb78" rx="2"/>
+                    <rect x="65" y="65" width="20" height="30" fill="none" stroke="#38a169" stroke-width="2" rx="2"/>
+                    <line x1="75" y1="95" x2="75" y2="105" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- Two Green Candles Stacked -->
+            <button class="emoji-btn" onclick="insertEmoji('two-green-stacked')" title="Two Green Candles Stacked">
+                <svg viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="35" y1="20" x2="95" y2="20" stroke="#000000" stroke-width="2" stroke-dasharray="6,3" stroke-linecap="round"/>
+                    <line x1="55" y1="25" x2="55" y2="35" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="45" y="35" width="20" height="30" fill="#48bb78" rx="2"/>
+                    <rect x="45" y="35" width="20" height="30" fill="none" stroke="#38a169" stroke-width="2" rx="2"/>
+                    <line x1="55" y1="65" x2="55" y2="75" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="35" y1="85" x2="35" y2="100" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="20" y="100" width="30" height="45" fill="#48bb78" rx="2"/>
+                    <rect x="20" y="100" width="30" height="45" fill="none" stroke="#38a169" stroke-width="2" rx="2"/>
+                    <line x1="35" y1="145" x2="35" y2="155" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- Near The Top -->
+            <button class="emoji-btn" onclick="insertEmoji('near-the-top')" title="Near The Top">
+                <svg viewBox="0 0 220 180" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="50" y1="75" x2="50" y2="90" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="30" y="90" width="40" height="50" fill="#48bb78" rx="3"/>
+                    <rect x="30" y="90" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"/>
+                    <line x1="50" y1="140" x2="50" y2="155" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="90" y1="25" x2="90" y2="40" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="70" y="40" width="40" height="50" fill="#48bb78" rx="3"/>
+                    <rect x="70" y="40" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"/>
+                    <line x1="90" y1="90" x2="90" y2="105" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="110" y="0" width="40" height="40" fill="#48bb78" rx="3"/>
+                    <rect x="110" y="0" width="40" height="40" fill="none" stroke="#38a169" stroke-width="3" rx="3"/>
+                    <line x1="130" y1="40" x2="130" y2="55" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="100" y1="0" x2="200" y2="0" stroke="#000000" stroke-width="2" stroke-dasharray="6,3" stroke-linecap="round"/>
+                    <line x1="180" y1="0" x2="180" y2="15" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="172" y="16" width="16" height="3" fill="#a0aec0" rx="1"/>
+                    <rect x="172" y="16" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"/>
+                    <line x1="180" y1="19" x2="180" y2="35" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- In The Middle -->
+            <button class="emoji-btn" onclick="insertEmoji('in-the-middle')" title="In The Middle">
+                <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="10" y1="125" x2="10" y2="140" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="-10" y="140" width="40" height="50" fill="#48bb78" rx="3"/>
+                    <rect x="-10" y="140" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"/>
+                    <line x1="10" y1="190" x2="10" y2="200" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="50" y1="75" x2="50" y2="90" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="30" y="90" width="40" height="50" fill="#48bb78" rx="3"/>
+                    <rect x="30" y="90" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"/>
+                    <line x1="50" y1="140" x2="50" y2="155" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="90" y1="25" x2="90" y2="40" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="70" y="40" width="40" height="50" fill="#48bb78" rx="3"/>
+                    <rect x="70" y="40" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"/>
+                    <line x1="90" y1="90" x2="90" y2="105" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="110" y="0" width="40" height="40" fill="#48bb78" rx="3"/>
+                    <rect x="110" y="0" width="40" height="40" fill="none" stroke="#38a169" stroke-width="3" rx="3"/>
+                    <line x1="130" y1="40" x2="130" y2="55" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="170" y1="25" x2="170" y2="40" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="150" y="40" width="40" height="50" fill="#48bb78" rx="3"/>
+                    <rect x="150" y="40" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"/>
+                    <line x1="170" y1="90" x2="170" y2="105" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="145" y1="65" x2="240" y2="65" stroke="#000000" stroke-width="2" stroke-dasharray="6,3" stroke-linecap="round"/>
+                    <line x1="210" y1="65" x2="210" y2="84" stroke="#718096" stroke-width="2.5" stroke-linecap="round"/>
+                    <rect x="200" y="85" width="20" height="4" fill="#a0aec0" rx="1"/>
+                    <rect x="200" y="85" width="20" height="4" fill="none" stroke="#718096" stroke-width="2" rx="1"/>
+                    <line x1="210" y1="89" x2="210" y2="108" stroke="#718096" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- Lower Low Middle -->
+            <button class="emoji-btn" onclick="insertEmoji('lower-low-middle')" title="Lower Low Middle">
+                <svg viewBox="0 0 350 180" xmlns="http://www.w3.org/2000/svg">
+                    <line x1="50" y1="75" x2="50" y2="90" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="30" y="90" width="40" height="50" fill="#48bb78" rx="3"/>
+                    <rect x="30" y="90" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"/>
+                    <line x1="50" y1="140" x2="50" y2="155" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="90" y1="25" x2="90" y2="40" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="70" y="40" width="40" height="50" fill="#48bb78" rx="3"/>
+                    <rect x="70" y="40" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"/>
+                    <line x1="90" y1="90" x2="90" y2="105" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="110" y="0" width="40" height="40" fill="#48bb78" rx="3"/>
+                    <rect x="110" y="0" width="40" height="40" fill="none" stroke="#38a169" stroke-width="3" rx="3"/>
+                    <line x1="130" y1="40" x2="130" y2="55" stroke="#38a169" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="165" y1="10" x2="165" y2="19" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="157" y="20" width="16" height="3" fill="#a0aec0" rx="1"/>
+                    <rect x="157" y="20" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"/>
+                    <line x1="165" y1="23" x2="165" y2="32" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="190" y1="10" x2="190" y2="17" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="182" y="17" width="16" height="9" fill="#fc8181" rx="1"/>
+                    <rect x="182" y="17" width="16" height="9" fill="none" stroke="#c53030" stroke-width="1.5" rx="1"/>
+                    <line x1="215" y1="20" x2="215" y2="30" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="205" y="30" width="20" height="25" fill="#fc8181" rx="2"/>
+                    <rect x="205" y="30" width="20" height="25" fill="none" stroke="#c53030" stroke-width="2" rx="2"/>
+                    <line x1="215" y1="55" x2="215" y2="65" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                    <text x="215" y="73" fill="#c53030" font-size="10" font-weight="bold" text-anchor="middle">LL1</text>
+                    <line x1="245" y1="30" x2="245" y2="35" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="235" y="35" width="20" height="15" fill="#48bb78" rx="2"/>
+                    <rect x="235" y="35" width="20" height="15" fill="none" stroke="#38a169" stroke-width="2" rx="2"/>
+                    <line x1="245" y1="50" x2="245" y2="55" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="275" y1="45" x2="275" y2="50" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="265" y="50" width="20" height="25" fill="#fc8181" rx="2"/>
+                    <rect x="265" y="50" width="20" height="25" fill="none" stroke="#c53030" stroke-width="2" rx="2"/>
+                    <line x1="275" y1="75" x2="275" y2="80" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                    <text x="275" y="88" fill="#c53030" font-size="10" font-weight="bold" text-anchor="middle">LL2</text>
+                    <line x1="270" y1="45" x2="340" y2="45" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,3" stroke-linecap="round"/>
+                    <line x1="305" y1="30" x2="305" y2="40" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="295" y="40" width="20" height="25" fill="#48bb78" rx="2"/>
+                    <rect x="295" y="40" width="20" height="25" fill="none" stroke="#38a169" stroke-width="2" rx="2"/>
+                    <line x1="305" y1="65" x2="305" y2="75" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- Lower Low with L1 and LL Labels (NEW) -->
+            <button class="emoji-btn" onclick="insertEmoji('lower-low-labeled')" title="Lower Low with L1 and LL Labels">
+                <svg viewBox="0 0 450 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 4 Green candles going up -->
+                    <line x1="30" y1="140" x2="30" y2="150" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"/>
+                    <rect x="20" y="110" width="20" height="40" fill="#48bb78" rx="2"/>
+                    <rect x="20" y="110" width="20" height="40" fill="none" stroke="#38a169" stroke-width="2" rx="2"/>
+                    <line x1="30" y1="105" x2="30" y2="110" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"/>
+                    
+                    <line x1="60" y1="95" x2="60" y2="105" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"/>
+                    <rect x="50" y="65" width="20" height="40" fill="#48bb78" rx="2"/>
+                    <rect x="50" y="65" width="20" height="40" fill="none" stroke="#38a169" stroke-width="2" rx="2"/>
+                    <line x1="60" y1="55" x2="60" y2="65" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"/>
+                    
+                    <line x1="90" y1="45" x2="90" y2="55" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"/>
+                    <rect x="80" y="20" width="20" height="35" fill="#48bb78" rx="2"/>
+                    <rect x="80" y="20" width="20" height="35" fill="none" stroke="#38a169" stroke-width="2" rx="2"/>
+                    <line x1="90" y1="15" x2="90" y2="20" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"/>
+                    
+                    <line x1="120" y1="35" x2="120" y2="45" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"/>
+                    <rect x="110" y="10" width="20" height="35" fill="#48bb78" rx="2"/>
+                    <rect x="110" y="10" width="20" height="35" fill="none" stroke="#38a169" stroke-width="2" rx="2"/>
+                    <line x1="120" y1="5" x2="120" y2="10" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"/>
+                    
+                    <!-- Doji -->
+                    <line x1="150" y1="5" x2="150" y2="20" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="145" y="20" width="10" height="2" fill="#a0aec0" rx="1"/>
+                    <line x1="150" y1="22" x2="150" y2="37" stroke="#718096" stroke-width="2" stroke-linecap="round"/>
+                    
+                    <!-- First Red candle -->
+                    <line x1="175" y1="15" x2="175" y2="25" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="168" y="25" width="14" height="35" fill="#fc8181" rx="2"/>
+                    <rect x="168" y="25" width="14" height="35" fill="none" stroke="#c53030" stroke-width="2" rx="2"/>
+                    <line x1="175" y1="60" x2="175" y2="70" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                    
+                    <!-- L1 Bracket below first red -->
+                    <path d="M 165 80 L 165 85 L 185 85 L 185 80" stroke="#000000" stroke-width="1.5" fill="none"/>
+                    <text x="175" y="95" fill="#000000" font-size="11" font-weight="bold" text-anchor="middle">L1</text>
+                    
+                    <!-- Small green -->
+                    <line x1="205" y1="55" x2="205" y2="60" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="200" y="60" width="10" height="15" fill="#48bb78" rx="1"/>
+                    <rect x="200" y="60" width="10" height="15" fill="none" stroke="#38a169" stroke-width="1.5" rx="1"/>
+                    <line x1="205" y1="75" x2="205" y2="80" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                    
+                    <!-- Second larger red (LL) -->
+                    <line x1="230" y1="70" x2="230" y2="80" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="222" y="80" width="16" height="50" fill="#fc8181" rx="2"/>
+                    <rect x="222" y="80" width="16" height="50" fill="none" stroke="#c53030" stroke-width="2" rx="2"/>
+                    <line x1="230" y1="130" x2="230" y2="145" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                    
+                    <!-- LL Bracket below second red -->
+                    <path d="M 218 155 L 218 160 L 242 160 L 242 155" stroke="#000000" stroke-width="1.5" fill="none"/>
+                    <text x="230" y="172" fill="#000000" font-size="11" font-weight="bold" text-anchor="middle">LL</text>
+                    
+                    <!-- Dotted line at LL level -->
+                    <line x1="240" y1="130" x2="380" y2="130" stroke="#000000" stroke-width="2" stroke-dasharray="4,4" stroke-linecap="round"/>
+                    
+                    <!-- Small red below line -->
+                    <line x1="270" y1="125" x2="270" y2="133" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="265" y="133" width="10" height="18" fill="#fc8181" rx="1"/>
+                    <rect x="265" y="133" width="10" height="18" fill="none" stroke="#c53030" stroke-width="1.5" rx="1"/>
+                    <line x1="270" y1="151" x2="270" y2="160" stroke="#c53030" stroke-width="2" stroke-linecap="round"/>
+                    
+                    <!-- Green candle penetrating line -->
+                    <line x1="295" y1="105" x2="295" y2="115" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                    <rect x="288" y="115" width="14" height="30" fill="#48bb78" rx="2"/>
+                    <rect x="288" y="115" width="14" height="30" fill="none" stroke="#38a169" stroke-width="2" rx="2"/>
+                    <line x1="295" y1="145" x2="295" y2="155" stroke="#38a169" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- Pop Entry (Red below, Green above line) -->
+            <button class="emoji-btn" onclick="insertEmoji('pop-entry')" title="Pop Entry - Red Below Green Above">
+                <svg viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
+                    <!-- ENTRY text at top -->
+                    <text x="100" y="40" fill="#000000" font-size="28" font-weight="900" text-anchor="middle">ENTRY</text>
+                    
+                    <!-- Arrow pointing down -->
+                    <line x1="85" y1="55" x2="60" y2="95" stroke="#000000" stroke-width="6" stroke-linecap="round"/>
+                    <path d="M 60 95 L 50 75 L 70 85 Z" fill="#000000"/>
+                    
+                    <!-- Dotted horizontal line -->
+                    <line x1="10" y1="140" x2="190" y2="140" stroke="#000000" stroke-width="3" stroke-dasharray="8,8" stroke-linecap="round"/>
+                    
+                    <!-- Red candle below line -->
+                    <line x1="80" y1="145" x2="80" y2="160" stroke="#4a5568" stroke-width="4" stroke-linecap="round"/>
+                    <rect x="60" y="160" width="40" height="90" fill="#ef4444" rx="3"/>
+                    <rect x="60" y="160" width="40" height="90" fill="none" stroke="#991b1b" stroke-width="3" rx="3"/>
+                    <line x1="80" y1="250" x2="80" y2="265" stroke="#4a5568" stroke-width="4" stroke-linecap="round"/>
+                    
+                    <!-- Green candle above line -->
+                    <line x1="140" y1="80" x2="140" y2="100" stroke="#4a5568" stroke-width="4" stroke-linecap="round"/>
+                    <rect x="120" y="100" width="40" height="80" fill="#48bb78" rx="3"/>
+                    <rect x="120" y="100" width="40" height="80" fill="none" stroke="#38a169" stroke-width="3" rx="3"/>
+                    <line x1="140" y1="180" x2="140" y2="195" stroke="#4a5568" stroke-width="4" stroke-linecap="round"/>
+                </svg>
+            </button>
+            
+            <!-- Pop Entry with LL Pattern and Check/X -->
+            <button class="emoji-btn" onclick="insertEmoji('pop-ll-pattern')" title="1st Lower Low Entry Pattern">
+                <svg viewBox="0 0 450 280" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 1ST LOWER LOW text at top left -->
+                    <text x="75" y="30" fill="#000000" font-size="20" font-weight="900" text-anchor="middle">1ST</text>
+                    <text x="75" y="55" fill="#000000" font-size="18" font-weight="900" text-anchor="middle" text-decoration="underline">LOWER LOW</text>
+                    
+                    <!-- Arrow pointing to first red -->
+                    <line x1="100" y1="65" x2="130" y2="95" stroke="#000000" stroke-width="5" stroke-linecap="round"/>
+                    <path d="M 130 95 L 120 80 L 140 85 Z" fill="#000000"/>
+                    
+                    <!-- Dotted horizontal line -->
+                    <line x1="10" y1="85" x2="440" y2="85" stroke="#000000" stroke-width="2.5" stroke-dasharray="6,6" stroke-linecap="round"/>
+                    
+                    <!-- Vertical reference line on right -->
+                    <line x1="315" y1="35" x2="315" y2="275" stroke="#000000" stroke-width="3" stroke-linecap="round"/>
+                    
+                    <!-- First red candle (tallest) -->
+                    <line x1="145" y1="90" x2="145" y2="105" stroke="#4a5568" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="132" y="105" width="26" height="140" fill="#ef4444" rx="2"/>
+                    <rect x="132" y="105" width="26" height="140" fill="none" stroke="#991b1b" stroke-width="2.5" rx="2"/>
+                    <line x1="145" y1="245" x2="145" y2="260" stroke="#4a5568" stroke-width="3" stroke-linecap="round"/>
+                    
+                    <!-- Small green bounce -->
+                    <line x1="185" y1="135" x2="185" y2="145" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"/>
+                    <rect x="177" y="145" width="16" height="30" fill="#48bb78" rx="1.5"/>
+                    <rect x="177" y="145" width="16" height="30" fill="none" stroke="#38a169" stroke-width="2" rx="1.5"/>
+                    <line x1="185" y1="175" x2="185" y2="185" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"/>
+                    
+                    <!-- Second red candle (medium) -->
+                    <line x1="220" y1="155" x2="220" y2="165" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"/>
+                    <rect x="210" y="165" width="20" height="70" fill="#ef4444" rx="2"/>
+                    <rect x="210" y="165" width="20" height="70" fill="none" stroke="#991b1b" stroke-width="2" rx="2"/>
+                    <line x1="220" y1="235" x2="220" y2="250" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"/>
+                    
+                    <!-- Third red candle (smaller) -->
+                    <line x1="255" y1="175" x2="255" y2="185" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"/>
+                    <rect x="247" y="185" width="16" height="50" fill="#ef4444" rx="1.5"/>
+                    <rect x="247" y="185" width="16" height="50" fill="none" stroke="#991b1b" stroke-width="2" rx="1.5"/>
+                    <line x1="255" y1="235" x2="255" y2="245" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"/>
+                    
+                    <!-- Small green before entry area -->
+                    <line x1="285" y1="155" x2="285" y2="165" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"/>
+                    <rect x="277" y="165" width="16" height="50" fill="#48bb78" rx="1.5"/>
+                    <rect x="277" y="165" width="16" height="50" fill="none" stroke="#38a169" stroke-width="2" rx="1.5"/>
+                    <line x1="285" y1="215" x2="285" y2="230" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"/>
+                    
+                    <!-- Two green candles in entry zone -->
+                    <line x1="335" y1="105" x2="335" y2="120" stroke="#4a5568" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="325" y="120" width="20" height="50" fill="#48bb78" rx="2"/>
+                    <rect x="325" y="120" width="20" height="50" fill="none" stroke="#38a169" stroke-width="2.5" rx="2"/>
+                    <line x1="335" y1="170" x2="335" y2="185" stroke="#4a5568" stroke-width="3" stroke-linecap="round"/>
+                    
+                    <line x1="370" y1="65" x2="370" y2="80" stroke="#4a5568" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="360" y="80" width="20" height="70" fill="#48bb78" rx="2"/>
+                    <rect x="360" y="80" width="20" height="70" fill="none" stroke="#38a169" stroke-width="2.5" rx="2"/>
+                    <line x1="370" y1="150" x2="370" y2="165" stroke="#4a5568" stroke-width="3" stroke-linecap="round"/>
+                    
+                    <!-- Green checkmark circle -->
+                    <circle cx="350" cy="205" r="18" fill="#10b981" stroke="#059669" stroke-width="2"/>
+                    <path d="M 343 205 L 348 210 L 357 198" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                    
+                    <!-- Red X circle -->
+                    <circle cx="350" cy="245" r="18" fill="#ef4444" stroke="#991b1b" stroke-width="2"/>
+                    <line x1="343" y1="238" x2="357" y2="252" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+                    <line x1="357" y1="238" x2="343" y2="252" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+                    
+                    <!-- ENTRY text and arrow on right -->
+                    <text x="415" y="130" fill="#000000" font-size="20" font-weight="900" text-anchor="middle">ENTRY</text>
+                    <line x1="395" y1="110" x2="380" y2="95" stroke="#000000" stroke-width="5" stroke-linecap="round"/>
+                    <path d="M 380 95 L 395 90 L 390 105 Z" fill="#000000"/>
+                </svg>
+            </button>
+            
+            <!-- Red + Green Lower Low (NEW) -->
+            <button class="emoji-btn" onclick="insertEmoji('red-green-lower-low')" title="Red + Green Lower Low">
+                <svg width="150" height="200" viewBox="0 0 150 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Horizontal line touching top of wicks -->
+                    <line x1="10" y1="65" x2="140" y2="65" stroke="#8b5cf6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/>
+                    
+                    <!-- Arrow pointing down from line -->
+                    <line x1="75" y1="35" x2="75" y2="60" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M 75 60 L 70 53 L 80 53 Z" fill="#f59e0b"/>
+                    
+                    <!-- Red candle (left) - wick touches line at y=65 -->
+                    <line x1="50" y1="65" x2="50" y2="75" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="40" y="75" width="20" height="60" fill="#ef4444" rx="2"/>
+                    <rect x="40" y="75" width="20" height="60" fill="none" stroke="#dc2626" stroke-width="2.5" rx="2"/>
+                    <line x1="50" y1="135" x2="50" y2="145" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+                    
+                    <!-- Green candle (right) - wick touches line at y=65 -->
+                    <line x1="100" y1="65" x2="100" y2="75" stroke="#10b981" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="90" y="75" width="20" height="60" fill="#10b981" rx="2"/>
+                    <rect x="90" y="75" width="20" height="60" fill="none" stroke="#059669" stroke-width="2.5" rx="2"/>
+                    <line x1="100" y1="135" x2="100" y2="145" stroke="#10b981" stroke-width="3" stroke-linecap="round"/>
+                    
+                    <!-- "LOWER LOW" text BELOW candles -->
+                    <text x="75" y="165" fill="#f59e0b" font-size="14" font-weight="bold" text-anchor="middle" font-family="monospace">LOWER LOW</text>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="screen-start">
+            <h1 class="editable">📊</h1>
+            <h1 class="editable">Wait for candle after doji to finish forming</h1>
+            <p class="subtitle editable">Interactive Decision Tree</p>
+            
+            <div class="question editable">Which color candle after doji?</div>
+            <div class="options">
+                <button class="btn btn-green" onclick="showScreen('green-path')"><span class="editable">🟢 Green Candle</span></button>
+                <button class="btn btn-red" onclick="showScreen('red-path')"><span class="editable">🔴 Red Candle</span></button>
+                <button class="btn btn-gray" onclick="showScreen('another-doji')"><span class="editable">🟡 Another Doji</span></button>
+            </div>
+        </div>
+
+        <!-- Red Path -->
+        <div id="screen-red-path" class="hidden">
+            <div class="question editable">Should look something like this:
+                <div style="margin-top: 15px;">
+                    <svg width="56.4" height="56.4" viewBox="0 0 120 120" style="display: inline-block; vertical-align: middle; margin-right: 2px; margin-left: 2px;">
+                        <line x1="10" y1="30" x2="110" y2="30" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"></line>
+                        <line x1="35" y1="35" x2="35" y2="52" stroke="#718096" stroke-width="2" stroke-linecap="round"></line>
+                        <rect x="27" y="53" width="16" height="3" fill="#a0aec0" rx="1"></rect>
+                        <rect x="27" y="53" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"></rect>
+                        <line x1="35" y1="56" x2="35" y2="75" stroke="#718096" stroke-width="2" stroke-linecap="round"></line>
+                        <line x1="75" y1="35" x2="75" y2="48" stroke="#c53030" stroke-width="2" stroke-linecap="round"></line>
+                        <rect x="65" y="48" width="20" height="38" fill="#fc8181" rx="2"></rect>
+                        <rect x="65" y="48" width="20" height="38" fill="none" stroke="#c53030" stroke-width="2" rx="2"></rect>
+                        <line x1="75" y1="86" x2="75" y2="100" stroke="#c53030" stroke-width="2" stroke-linecap="round"></line>
+                    </svg>
+                </div>
+            </div>
+            
+            <h1 class="editable" style="margin-top: 30px; margin-bottom: 20px;">Find Lower Low</h1>
+            <div class="question editable">Where is the location?</div>
+            
+            <div class="options">
+                <button class="btn btn-gray" onclick="showScreen('scenario-1')">
+                    <div class="scenario-label">S1</div>
+                    <span class="editable"><svg width="107.3" height="55.5" viewBox="0 0 350 180" style="display: inline-block; vertical-align: middle; margin-right: 2px; margin-left: 2px;"><line x1="50" y1="75" x2="50" y2="90" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><rect x="30" y="90" width="40" height="50" fill="#48bb78" rx="3"></rect><rect x="30" y="90" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"></rect><line x1="50" y1="140" x2="50" y2="155" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><line x1="90" y1="25" x2="90" y2="40" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><rect x="70" y="40" width="40" height="50" fill="#48bb78" rx="3"></rect><rect x="70" y="40" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"></rect><line x1="90" y1="90" x2="90" y2="105" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><rect x="110" y="0" width="40" height="40" fill="#48bb78" rx="3"></rect><rect x="110" y="0" width="40" height="40" fill="none" stroke="#38a169" stroke-width="3" rx="3"></rect><line x1="130" y1="40" x2="130" y2="55" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><line x1="165" y1="10" x2="165" y2="19" stroke="#718096" stroke-width="2" stroke-linecap="round"></line><rect x="157" y="20" width="16" height="3" fill="#a0aec0" rx="1"></rect><rect x="157" y="20" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"></rect><line x1="165" y1="23" x2="165" y2="32" stroke="#718096" stroke-width="2" stroke-linecap="round"></line><line x1="190" y1="10" x2="190" y2="17" stroke="#c53030" stroke-width="2" stroke-linecap="round"></line><rect x="182" y="17" width="16" height="9" fill="#fc8181" rx="1"></rect><rect x="182" y="17" width="16" height="9" fill="none" stroke="#c53030" stroke-width="1.5" rx="1"></rect><line x1="215" y1="20" x2="215" y2="30" stroke="#c53030" stroke-width="2" stroke-linecap="round"></line><rect x="205" y="30" width="20" height="25" fill="#fc8181" rx="2"></rect><rect x="205" y="30" width="20" height="25" fill="none" stroke="#c53030" stroke-width="2" rx="2"></rect><line x1="215" y1="55" x2="215" y2="65" stroke="#c53030" stroke-width="2" stroke-linecap="round"></line><text x="215" y="73" fill="#c53030" font-size="10" font-weight="bold" text-anchor="middle">LL1</text><line x1="245" y1="30" x2="245" y2="35" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line><rect x="235" y="35" width="20" height="15" fill="#48bb78" rx="2"></rect><rect x="235" y="35" width="20" height="15" fill="none" stroke="#38a169" stroke-width="2" rx="2"></rect><line x1="245" y1="50" x2="245" y2="55" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line><line x1="275" y1="45" x2="275" y2="50" stroke="#c53030" stroke-width="2" stroke-linecap="round"></line><rect x="265" y="50" width="20" height="25" fill="#fc8181" rx="2"></rect><rect x="265" y="50" width="20" height="25" fill="none" stroke="#c53030" stroke-width="2" rx="2"></rect><line x1="275" y1="75" x2="275" y2="80" stroke="#c53030" stroke-width="2" stroke-linecap="round"></line><text x="275" y="88" fill="#c53030" font-size="10" font-weight="bold" text-anchor="middle">LL2</text><line x1="270" y1="45" x2="340" y2="45" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,3" stroke-linecap="round"></line><line x1="305" y1="30" x2="305" y2="40" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line><rect x="295" y="40" width="20" height="25" fill="#48bb78" rx="2"></rect><rect x="295" y="40" width="20" height="25" fill="none" stroke="#38a169" stroke-width="2" rx="2"></rect><line x1="305" y1="65" x2="305" y2="75" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line></svg>middle of origin</span>
+                    <small class="editable">Success rate: 70%</small>
+                </button>
+                <button class="btn btn-gray" onclick="showScreen('scenario-2')">
+                    <div class="scenario-label">S2</div>
+                    <span class="editable"><svg width="129.5" height="59.2" viewBox="0 0 450 200" style="display: inline-block; vertical-align: middle; margin-right: 2px; margin-left: 2px;"><line x1="30" y1="140" x2="30" y2="150" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"></line><rect x="20" y="110" width="20" height="40" fill="#48bb78" rx="2"></rect><rect x="20" y="110" width="20" height="40" fill="none" stroke="#38a169" stroke-width="2" rx="2"></rect><line x1="30" y1="105" x2="30" y2="110" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"></line><line x1="60" y1="95" x2="60" y2="105" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"></line><rect x="50" y="65" width="20" height="40" fill="#48bb78" rx="2"></rect><rect x="50" y="65" width="20" height="40" fill="none" stroke="#38a169" stroke-width="2" rx="2"></rect><line x1="60" y1="55" x2="60" y2="65" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"></line><line x1="90" y1="45" x2="90" y2="55" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"></line><rect x="80" y="20" width="20" height="35" fill="#48bb78" rx="2"></rect><rect x="80" y="20" width="20" height="35" fill="none" stroke="#38a169" stroke-width="2" rx="2"></rect><line x1="90" y1="15" x2="90" y2="20" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"></line><line x1="120" y1="35" x2="120" y2="45" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"></line><rect x="110" y="10" width="20" height="35" fill="#48bb78" rx="2"></rect><rect x="110" y="10" width="20" height="35" fill="none" stroke="#38a169" stroke-width="2" rx="2"></rect><line x1="120" y1="5" x2="120" y2="10" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"></line><line x1="150" y1="5" x2="150" y2="20" stroke="#718096" stroke-width="2" stroke-linecap="round"></line><rect x="145" y="20" width="10" height="2" fill="#a0aec0" rx="1"></rect><line x1="150" y1="22" x2="150" y2="37" stroke="#718096" stroke-width="2" stroke-linecap="round"></line><line x1="175" y1="15" x2="175" y2="25" stroke="#c53030" stroke-width="2" stroke-linecap="round"></line><rect x="168" y="25" width="14" height="35" fill="#fc8181" rx="2"></rect><rect x="168" y="25" width="14" height="35" fill="none" stroke="#c53030" stroke-width="2" rx="2"></rect><line x1="175" y1="60" x2="175" y2="70" stroke="#c53030" stroke-width="2" stroke-linecap="round"></line><path d="M 165 80 L 165 85 L 185 85 L 185 80" stroke="#000000" stroke-width="1.5" fill="none"></path><text x="175" y="95" fill="#000000" font-size="11" font-weight="bold" text-anchor="middle">L1</text><line x1="205" y1="55" x2="205" y2="60" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line><rect x="200" y="60" width="10" height="15" fill="#48bb78" rx="1"></rect><rect x="200" y="60" width="10" height="15" fill="none" stroke="#38a169" stroke-width="1.5" rx="1"></rect><line x1="205" y1="75" x2="205" y2="80" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line><line x1="230" y1="70" x2="230" y2="80" stroke="#c53030" stroke-width="2" stroke-linecap="round"></line><rect x="222" y="80" width="16" height="50" fill="#fc8181" rx="2"></rect><rect x="222" y="80" width="16" height="50" fill="none" stroke="#c53030" stroke-width="2" rx="2"></rect><line x1="230" y1="130" x2="230" y2="145" stroke="#c53030" stroke-width="2" stroke-linecap="round"></line><path d="M 218 155 L 218 160 L 242 160 L 242 155" stroke="#000000" stroke-width="1.5" fill="none"></path><text x="230" y="172" fill="#000000" font-size="11" font-weight="bold" text-anchor="middle">LL</text><line x1="240" y1="130" x2="380" y2="130" stroke="#000000" stroke-width="2" stroke-dasharray="4,4" stroke-linecap="round"></line><line x1="270" y1="125" x2="270" y2="133" stroke="#c53030" stroke-width="2" stroke-linecap="round"></line><rect x="265" y="133" width="10" height="18" fill="#fc8181" rx="1"></rect><rect x="265" y="133" width="10" height="18" fill="none" stroke="#c53030" stroke-width="1.5" rx="1"></rect><line x1="270" y1="151" x2="270" y2="160" stroke="#c53030" stroke-width="2" stroke-linecap="round"></line><line x1="295" y1="105" x2="295" y2="115" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line><rect x="288" y="115" width="14" height="30" fill="#48bb78" rx="2"></rect><rect x="288" y="115" width="14" height="30" fill="none" stroke="#38a169" stroke-width="2" rx="2"></rect><line x1="295" y1="145" x2="295" y2="155" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line></svg>below the origin</span>
+                    <small class="editable">Success rate: 50%</small>
+                </button>
+            </div>
+            <button class="back-btn" onclick="showScreen('start')"><span class="editable">← Back</span></button>
+        </div>
+
+        <!-- Green Path -->
+        <div id="screen-green-path" class="hidden">
+            <div class="question editable">Should look like one of these:
+                <div style="margin-top: 15px;">
+                    <svg width="56.4" height="56.4" viewBox="0 0 120 120" style="display: inline-block; vertical-align: middle; margin-right: 2px; margin-left: 2px;">
+                        <line x1="10" y1="60" x2="110" y2="60" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"></line>
+                        <line x1="35" y1="60" x2="35" y2="72" stroke="#718096" stroke-width="2" stroke-linecap="round"></line>
+                        <rect x="27" y="73" width="16" height="3" fill="#a0aec0" rx="1"></rect>
+                        <rect x="27" y="73" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"></rect>
+                        <line x1="35" y1="76" x2="35" y2="95" stroke="#718096" stroke-width="2" stroke-linecap="round"></line>
+                        <line x1="75" y1="25" x2="75" y2="45" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line>
+                        <rect x="65" y="45" width="20" height="40" fill="#48bb78" rx="2"></rect>
+                        <rect x="65" y="45" width="20" height="40" fill="none" stroke="#38a169" stroke-width="2" rx="2"></rect>
+                        <line x1="75" y1="85" x2="75" y2="105" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line>
+                    </svg>
+                    <svg width="56.4" height="56.4" viewBox="0 0 120 120" style="display: inline-block; vertical-align: middle; margin-right: 2px; margin-left: 2px;">
+                        <line x1="10" y1="30" x2="110" y2="30" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"></line>
+                        <line x1="35" y1="35" x2="35" y2="52" stroke="#718096" stroke-width="2" stroke-linecap="round"></line>
+                        <rect x="27" y="53" width="16" height="3" fill="#a0aec0" rx="1"></rect>
+                        <rect x="27" y="53" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"></rect>
+                        <line x1="35" y1="56" x2="35" y2="75" stroke="#718096" stroke-width="2" stroke-linecap="round"></line>
+                        <line x1="75" y1="35" x2="75" y2="50" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line>
+                        <rect x="65" y="50" width="20" height="35" fill="#48bb78" rx="2"></rect>
+                        <rect x="65" y="50" width="20" height="35" fill="none" stroke="#38a169" stroke-width="2" rx="2"></rect>
+                        <line x1="75" y1="85" x2="75" y2="100" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line>
+                    </svg>
+                    <svg width="56.4" height="56.4" viewBox="0 0 120 120" style="display: inline-block; vertical-align: middle; margin-right: 2px; margin-left: 2px;">
+                        <line x1="10" y1="60" x2="110" y2="60" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"></line>
+                        <line x1="35" y1="60" x2="35" y2="72" stroke="#718096" stroke-width="2" stroke-linecap="round"></line>
+                        <rect x="27" y="73" width="16" height="3" fill="#a0aec0" rx="1"></rect>
+                        <rect x="27" y="73" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"></rect>
+                        <line x1="35" y1="76" x2="35" y2="95" stroke="#718096" stroke-width="2" stroke-linecap="round"></line>
+                        <line x1="75" y1="35" x2="75" y2="65" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line>
+                        <rect x="65" y="65" width="20" height="30" fill="#48bb78" rx="2"></rect>
+                        <rect x="65" y="65" width="20" height="30" fill="none" stroke="#38a169" stroke-width="2" rx="2"></rect>
+                        <line x1="75" y1="95" x2="75" y2="105" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="editable" style="min-height: 50px; margin: 20px 0; text-align: center; font-size: 1.1em; font-weight: 600; color: #2d3748;">Where is doji located?</div>
+            
+            <div class="options">
+                <button class="btn btn-gray" onclick="showScreen('scenario-3')">
+                    <div class="scenario-label">S3</div>
+                    <span class="editable"><svg width="75.6" height="63" viewBox="0 0 220 180" style="display: inline-block; vertical-align: middle; margin-right: 2px; margin-left: 2px;"><line x1="50" y1="75" x2="50" y2="90" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><rect x="30" y="90" width="40" height="50" fill="#48bb78" rx="3"></rect><rect x="30" y="90" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"></rect><line x1="50" y1="140" x2="50" y2="155" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><line x1="90" y1="25" x2="90" y2="40" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><rect x="70" y="40" width="40" height="50" fill="#48bb78" rx="3"></rect><rect x="70" y="40" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"></rect><line x1="90" y1="90" x2="90" y2="105" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><rect x="110" y="0" width="40" height="40" fill="#48bb78" rx="3"></rect><rect x="110" y="0" width="40" height="40" fill="none" stroke="#38a169" stroke-width="3" rx="3"></rect><line x1="130" y1="40" x2="130" y2="55" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><line x1="100" y1="0" x2="200" y2="0" stroke="#000000" stroke-width="2" stroke-dasharray="6,3" stroke-linecap="round"></line><line x1="180" y1="0" x2="180" y2="15" stroke="#718096" stroke-width="2" stroke-linecap="round"></line><rect x="172" y="16" width="16" height="3" fill="#a0aec0" rx="1"></rect><rect x="172" y="16" width="16" height="3" fill="#none" stroke="#718096" stroke-width="1.5" rx="1"></rect><line x1="180" y1="19" x2="180" y2="35" stroke="#718096" stroke-width="2" stroke-linecap="round"></line></svg>near or at the top</span>
+                    <small class="editable">Success rate: 70%</small>
+                </button>
+                <button class="btn btn-gray" onclick="showScreen('scenario-4')">
+                    <div class="scenario-label">S4</div>
+                    <span class="editable"><svg width="102.5" height="69.7" viewBox="0 0 300 200" style="display: inline-block; vertical-align: middle; margin-right: 2px; margin-left: 2px;"><line x1="10" y1="125" x2="10" y2="140" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><rect x="-10" y="140" width="40" height="50" fill="#48bb78" rx="3"></rect><rect x="-10" y="140" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"></rect><line x1="10" y1="190" x2="10" y2="200" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><line x1="50" y1="75" x2="50" y2="90" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><rect x="30" y="90" width="40" height="50" fill="#48bb78" rx="3"></rect><rect x="30" y="90" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"></rect><line x1="50" y1="140" x2="50" y2="155" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><line x1="90" y1="25" x2="90" y2="40" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><rect x="70" y="40" width="40" height="50" fill="#48bb78" rx="3"></rect><rect x="70" y="40" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"></rect><line x1="90" y1="90" x2="90" y2="105" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><rect x="110" y="0" width="40" height="40" fill="#48bb78" rx="3"></rect><rect x="110" y="0" width="40" height="40" fill="none" stroke="#38a169" stroke-width="3" rx="3"></rect><line x1="130" y1="40" x2="130" y2="55" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><line x1="170" y1="25" x2="170" y2="40" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><rect x="150" y="40" width="40" height="50" fill="#48bb78" rx="3"></rect><rect x="150" y="40" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"></rect><line x1="170" y1="90" x2="170" y2="105" stroke="#38a169" stroke-width="3" stroke-linecap="round"></line><line x1="145" y1="65" x2="240" y2="65" stroke="#000000" stroke-width="2" stroke-dasharray="6,3" stroke-linecap="round"></line><line x1="210" y1="65" x2="210" y2="84" stroke="#718096" stroke-width="2.5" stroke-linecap="round"></line><rect x="200" y="85" width="20" height="4" fill="#a0aec0" rx="1"></rect><rect x="200" y="85" width="20" height="4" fill="none" stroke="#718096" stroke-width="2" rx="1"></rect><line x1="210" y1="89" x2="210" y2="108" stroke="#718096" stroke-width="2.5" stroke-linecap="round"></line></svg> in the middle </span>
+                    <small class="editable">Success rate: 80%</small>
+                </button>
+            </div>
+            <button class="back-btn" onclick="showScreen('start')"><span class="editable">← Back</span></button>
+        </div>
+
+        <!-- Another Doji -->
+        <div id="screen-another-doji" class="hidden">
+            <div class="scenario-box">
+                <div class="scenario-title editable">Multiple Dojis = Wait</div>
+                <div class="info-section">
+                    <div class="info-label editable">What to do</div>
+                    <div class="info-text editable">Wait for a decisive candle (red or green) after the dojis to determine the scenario</div>
+                </div>
+                <div class="info-section">
+                    <div class="info-label editable">Pattern Status</div>
+                    <div class="info-text editable">Still forming - no trade yet</div>
+                </div>
+            </div>
+            <button class="back-btn" onclick="showScreen('start')"><span class="editable">← Back</span></button>
+        </div>
+
+        <!-- Scenario 1 -->
+        <div id="screen-scenario-1" class="hidden">
+            <div class="scenario-box">
+                <div class="scenario-title editable">Scenario 1: Red → Stays in Middle</div>
+                <div class="success-rate rate-likely editable">Success Rate: 80%</div>
+                
+                <div class="info-section">
+                    <div class="info-label editable">Entry: <svg width="93.60000000000001" height="57.2" viewBox="0 0 450 280" style="display: inline-block; vertical-align: middle; margin-right: 2px; margin-left: 2px;"><text x="75" y="30" fill="#000000" font-size="20" font-weight="900" text-anchor="middle"></text><text x="75" y="55" fill="#000000" font-size="18" font-weight="900" text-anchor="middle" text-decoration="underline"></text></svg><svg width="41.6" height="57.2" viewBox="0 0 200 280" style="display: inline-block; vertical-align: middle; margin-right: 2px; margin-left: 2px;"><text x="100" y="40" fill="#000000" font-size="28" font-weight="900" text-anchor="middle"></text><line x1="85" y1="55" x2="60" y2="95" stroke="#000000" stroke-width="6" stroke-linecap="round"></line><path d="M 60 95 L 50 75 L 70 85 Z" fill="#000000"></path><line x1="10" y1="140" x2="190" y2="140" stroke="#000000" stroke-width="3" stroke-dasharray="8,8" stroke-linecap="round"></line><line x1="80" y1="145" x2="80" y2="160" stroke="#4a5568" stroke-width="4" stroke-linecap="round"></line><rect x="60" y="160" width="40" height="90" fill="#ef4444" rx="3"></rect><rect x="60" y="160" width="40" height="90" fill="none" stroke="#991b1b" stroke-width="3" rx="3"></rect><line x1="80" y1="250" x2="80" y2="265" stroke="#4a5568" stroke-width="4" stroke-linecap="round"></line><line x1="140" y1="80" x2="140" y2="100" stroke="#4a5568" stroke-width="4" stroke-linecap="round"></line><rect x="120" y="100" width="40" height="80" fill="#48bb78" rx="3"></rect><rect x="120" y="100" width="40" height="80" fill="none" stroke="#38a169" stroke-width="3" rx="3"></rect><line x1="140" y1="180" x2="140" y2="195" stroke="#4a5568" stroke-width="4" stroke-linecap="round"></line></svg></div>
+                    <div class="info-text editable" id="entry-text-1">Wait for candle to finish forming. It should be penetrating the entry line, which is the height of the second lower low wick</div>
+                </div>
+
+                <button class="tts-btn" onclick="readText(1)"><span class="editable">🔊 Read to me</span></button>
+
+                <div class="info-section">
+                    <div class="info-label editable">Stop Loss</div>
+                    <div class="info-text editable">Extended black line (EXT STOP)</div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-label editable">Take Profit</div>
+                    <div class="info-text editable">Original top of the move</div>
+                </div>
+
+                <div style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 15px; padding: 20px; margin: 20px 0;">
+                    <div style="text-align: center; color: #64748b; font-size: 0.95em; margin-bottom: 15px; font-weight: 600;">📈 Your chart should look similar to this:</div>
+                    <svg viewBox="0 0 500 280" style="width: 100%; height: auto;">
+                        <line x1="50" y1="245" x2="50" y2="195" stroke="#10b981" stroke-width="2"/>
+                        <rect x="40" y="225" width="20" height="40" fill="#10b981"/>
+                        <line x1="80" y1="205" x2="80" y2="155" stroke="#10b981" stroke-width="2"/>
+                        <rect x="70" y="185" width="20" height="40" fill="#10b981"/>
+                        <line x1="110" y1="165" x2="110" y2="115" stroke="#10b981" stroke-width="2"/>
+                        <rect x="100" y="145" width="20" height="40" fill="#10b981"/>
+                        <line x1="140" y1="125" x2="140" y2="80" stroke="#10b981" stroke-width="2"/>
+                        <rect x="130" y="108" width="20" height="32" fill="#10b981"/>
+                        <line x1="170" y1="103" x2="170" y2="78" stroke="#f59e0b" stroke-width="2"/>
+                        <rect x="165" y="86" width="10" height="5" fill="#f59e0b"/>
+                        <line x1="170" y1="91" x2="170" y2="113" stroke="#f59e0b" stroke-width="2"/>
+                        <line x1="200" y1="81" x2="200" y2="130" stroke="#ef4444" stroke-width="2"/>
+                        <rect x="192" y="95" width="16" height="30" fill="#ef4444"/>
+                        <line x1="230" y1="128" x2="230" y2="165" stroke="#ef4444" stroke-width="2"/>
+                        <rect x="223" y="140" width="14" height="20" fill="#ef4444"/>
+                        <line x1="255" y1="163" x2="255" y2="157" stroke="#10b981" stroke-width="2"/>
+                        <rect x="250" y="158" width="10" height="5" fill="#10b981"/>
+                        <line x1="280" y1="160" x2="280" y2="195" stroke="#ef4444" stroke-width="2"/>
+                        <rect x="273" y="173" width="14" height="18" fill="#ef4444"/>
+                        <line x1="280" y1="160" x2="480" y2="160" stroke="#3b82f6" stroke-width="3" stroke-dasharray="8,4"/>
+                        <text x="485" y="165" fill="#3b82f6" font-size="11" font-weight="bold">ENTRY</text>
+                        <line x1="280" y1="180" x2="480" y2="180" stroke="#ef4444" stroke-width="3" stroke-dasharray="8,4"/>
+                        <text x="485" y="185" fill="#ef4444" font-size="11" font-weight="bold">STOP</text>
+                        <line x1="280" y1="200" x2="480" y2="200" stroke="#000000" stroke-width="2" stroke-dasharray="6,3"/>
+                        <text x="485" y="205" fill="#000000" font-size="10" font-weight="bold">EXT STOP</text>
+                        <line x1="140" y1="80" x2="480" y2="80" stroke="#10b981" stroke-width="3" stroke-dasharray="8,4"/>
+                        <text x="485" y="85" fill="#10b981" font-size="11" font-weight="bold">TARGET</text>
+                        <line x1="310" y1="193" x2="310" y2="163" stroke="#10b981" stroke-width="2"/>
+                        <rect x="302" y="178" width="16" height="20" fill="#10b981"/>
+                        <line x1="340" y1="168" x2="340" y2="138" stroke="#10b981" stroke-width="2"/>
+                        <rect x="332" y="153" width="16" height="20" fill="#10b981"/>
+                        <circle cx="340" cy="153" r="18" stroke="#3b82f6" stroke-width="3" fill="none"/>
+                        <text x="340" y="123" fill="#3b82f6" font-size="16" font-weight="bold" text-anchor="middle">↓</text>
+                        <text x="340" y="108" fill="#3b82f6" font-size="10" font-weight="bold" text-anchor="middle">Penetrating</text>
+                        <text x="340" y="96" fill="#3b82f6" font-size="10" font-weight="bold" text-anchor="middle">with body</text>
+                        <line x1="370" y1="143" x2="370" y2="110" stroke="#10b981" stroke-width="2"/>
+                        <rect x="362" y="127" width="16" height="21" fill="#10b981"/>
+                        <line x1="400" y1="115" x2="400" y2="85" stroke="#10b981" stroke-width="2"/>
+                        <rect x="392" y="100" width="16" height="20" fill="#10b981"/>
+                    </svg>
+                </div>
+
+                <button class="btn btn-purple" onclick="showScreen('start')" style="width: 100%; margin-top: 20px;">
+                    <span class="editable">↻ Start Over</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Scenario 2 -->
+        <div id="screen-scenario-2" class="hidden">
+            <div class="scenario-box">
+                <div class="scenario-title editable">Scenario 2: Red → Below Original Low</div>
+                <div class="success-rate rate-unlikely editable">Success rate: 50%</div>
+                
+                <div class="info-section">
+                    <div class="info-label editable">Entry &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<svg width="32" height="44" viewBox="0 0 200 280" style="display: inline-block; vertical-align: middle; margin-right: 2px; margin-left: 2px;"><text x="100" y="40" fill="#000000" font-size="28" font-weight="900" text-anchor="middle">ENTRY</text><line x1="85" y1="55" x2="60" y2="95" stroke="#000000" stroke-width="6" stroke-linecap="round"></line><path d="M 60 95 L 50 75 L 70 85 Z" fill="#000000"></path><line x1="10" y1="140" x2="190" y2="140" stroke="#000000" stroke-width="3" stroke-dasharray="8,8" stroke-linecap="round"></line><line x1="80" y1="145" x2="80" y2="160" stroke="#4a5568" stroke-width="4" stroke-linecap="round"></line><rect x="60" y="160" width="40" height="90" fill="#ef4444" rx="3"></rect><rect x="60" y="160" width="40" height="90" fill="none" stroke="#991b1b" stroke-width="3" rx="3"></rect><line x1="80" y1="250" x2="80" y2="265" stroke="#4a5568" stroke-width="4" stroke-linecap="round"></line><line x1="140" y1="80" x2="140" y2="100" stroke="#4a5568" stroke-width="4" stroke-linecap="round"></line><rect x="120" y="100" width="40" height="80" fill="#48bb78" rx="3"></rect><rect x="120" y="100" width="40" height="80" fill="none" stroke="#38a169" stroke-width="3" rx="3"></rect><line x1="140" y1="180" x2="140" y2="195" stroke="#4a5568" stroke-width="4" stroke-linecap="round"></line></svg>&nbsp; or<svg width="72" height="44" viewBox="0 0 450 280" style="display: inline-block; vertical-align: middle; margin-right: 2px; margin-left: 2px;"><text x="75" y="30" fill="#000000" font-size="20" font-weight="900" text-anchor="middle">1ST</text><text x="75" y="55" fill="#000000" font-size="18" font-weight="900" text-anchor="middle" text-decoration="underline">LOWER LOW</text><line x1="100" y1="65" x2="130" y2="95" stroke="#000000" stroke-width="5" stroke-linecap="round"></line><path d="M 130 95 L 120 80 L 140 85 Z" fill="#000000"></path><line x1="10" y1="85" x2="440" y2="85" stroke="#000000" stroke-width="2.5" stroke-dasharray="6,6" stroke-linecap="round"></line><line x1="315" y1="35" x2="315" y2="275" stroke="#000000" stroke-width="3" stroke-linecap="round"></line><line x1="145" y1="90" x2="145" y2="105" stroke="#4a5568" stroke-width="3" stroke-linecap="round"></line><rect x="132" y="105" width="26" height="140" fill="#ef4444" rx="2"></rect><rect x="132" y="105" width="26" height="140" fill="none" stroke="#991b1b" stroke-width="2.5" rx="2"></rect><line x1="145" y1="245" x2="145" y2="260" stroke="#4a5568" stroke-width="3" stroke-linecap="round"></line><line x1="185" y1="135" x2="185" y2="145" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"></line><rect x="177" y="145" width="16" height="30" fill="#48bb78" rx="1.5"></rect><rect x="177" y="145" width="16" height="30" fill="none" stroke="#38a169" stroke-width="2" rx="1.5"></rect><line x1="185" y1="175" x2="185" y2="185" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"></line><line x1="220" y1="155" x2="220" y2="165" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"></line><rect x="210" y="165" width="20" height="70" fill="#ef4444" rx="2"></rect><rect x="210" y="165" width="20" height="70" fill="none" stroke="#991b1b" stroke-width="2" rx="2"></rect><line x1="220" y1="235" x2="220" y2="250" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"></line><line x1="255" y1="175" x2="255" y2="185" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"></line><rect x="247" y="185" width="16" height="50" fill="#ef4444" rx="1.5"></rect><rect x="247" y="185" width="16" height="50" fill="none" stroke="#991b1b" stroke-width="2" rx="1.5"></rect><line x1="255" y1="235" x2="255" y2="245" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"></line><line x1="285" y1="155" x2="285" y2="165" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"></line><rect x="277" y="165" width="16" height="50" fill="#48bb78" rx="1.5"></rect><rect x="277" y="165" width="16" height="50" fill="none" stroke="#38a169" stroke-width="2" rx="1.5"></rect><line x1="285" y1="215" x2="285" y2="230" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"></line><line x1="335" y1="105" x2="335" y2="120" stroke="#4a5568" stroke-width="3" stroke-linecap="round"></line><rect x="325" y="120" width="20" height="50" fill="#48bb78" rx="2"></rect><rect x="325" y="120" width="20" height="50" fill="none" stroke="#38a169" stroke-width="2.5" rx="2"></rect><line x1="335" y1="170" x2="335" y2="185" stroke="#4a5568" stroke-width="3" stroke-linecap="round"></line><line x1="370" y1="65" x2="370" y2="80" stroke="#4a5568" stroke-width="3" stroke-linecap="round"></line><rect x="360" y="80" width="20" height="70" fill="#48bb78" rx="2"></rect><rect x="360" y="80" width="20" height="70" fill="none" stroke="#38a169" stroke-width="2.5" rx="2"></rect><line x1="370" y1="150" x2="370" y2="165" stroke="#4a5568" stroke-width="3" stroke-linecap="round"></line><circle cx="350" cy="205" r="18" fill="#10b981" stroke="#059669" stroke-width="2"></circle><path d="M 343 205 L 348 210 L 357 198" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="350" cy="245" r="18" fill="#ef4444" stroke="#991b1b" stroke-width="2"></circle><line x1="343" y1="238" x2="357" y2="252" stroke="#ffffff" stroke-width="3" stroke-linecap="round"></line><line x1="357" y1="238" x2="343" y2="252" stroke="#ffffff" stroke-width="3" stroke-linecap="round"></line><text x="415" y="130" fill="#000000" font-size="20" font-weight="900" text-anchor="middle"></text><line x1="395" y1="110" x2="380" y2="95" stroke="#000000" stroke-width="5" stroke-linecap="round"></line><path d="M 380 95 L 395 90 L 390 105 Z" fill="#000000"></path></svg></div>
+                    <div class="info-text editable" id="entry-text-2">Wait for candle to finish forming. It should be penetrating the entry line, which is the height of the second lower low wick</div>
+                </div>
+
+                <button class="tts-btn" onclick="readText(2)"><span class="editable">🔊 Read to me</span></button>
+
+                <div class="info-section">
+                    <div class="info-label editable">Stop Loss</div>
+                    <div class="info-text editable">20¢ below entry</div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-label editable">Take Profit</div>
+                    <div class="info-text editable">1:1 ratio (20¢ above entry)</div>
+                </div>
+
+                <div class="warning-box">
+                    <div class="warning-text editable">This is a fast-moving trade - Enter quickly!</div>
+                </div>
+
+                <div style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 15px; padding: 20px; margin: 20px 0;">
+                    <div style="text-align: center; color: #64748b; font-size: 0.95em; margin-bottom: 15px; font-weight: 600;">📈 Your chart should look similar to this:</div>
+                    <svg viewBox="0 0 500 280" style="width: 100%; height: auto;"><line x1="30" y1="210" x2="480" y2="210" stroke="#f59e0b" stroke-width="2" stroke-dasharray="8,4"/><text x="485" y="215" fill="#f59e0b" font-size="10" font-weight="bold">Start</text><line x1="50" y1="215" x2="50" y2="170" stroke="#10b981" stroke-width="2"/><rect x="40" y="195" width="20" height="35" fill="#10b981"/><line x1="80" y1="180" x2="80" y2="135" stroke="#10b981" stroke-width="2"/><rect x="70" y="160" width="20" height="35" fill="#10b981"/><line x1="110" y1="145" x2="110" y2="100" stroke="#10b981" stroke-width="2"/><rect x="100" y="125" width="20" height="35" fill="#10b981"/><line x1="140" y1="118" x2="140" y2="93" stroke="#f59e0b" stroke-width="2"/><rect x="135" y="103" width="10" height="5" fill="#f59e0b"/><line x1="140" y1="108" x2="140" y2="128" stroke="#f59e0b" stroke-width="2"/><line x1="170" y1="96" x2="170" y2="145" stroke="#ef4444" stroke-width="2"/><rect x="162" y="110" width="16" height="30" fill="#ef4444"/><line x1="200" y1="143" x2="200" y2="180" stroke="#ef4444" stroke-width="2"/><rect x="193" y="155" width="14" height="20" fill="#ef4444"/><line x1="225" y1="178" x2="225" y2="172" stroke="#10b981" stroke-width="2"/><rect x="220" y="173" width="10" height="5" fill="#10b981"/><line x1="250" y1="175" x2="250" y2="225" stroke="#ef4444" stroke-width="2"/><rect x="243" y="188" width="14" height="32" fill="#ef4444"/><line x1="250" y1="175" x2="480" y2="175" stroke="#3b82f6" stroke-width="3" stroke-dasharray="8,4"/><text x="485" y="180" fill="#3b82f6" font-size="11" font-weight="bold">ENTRY</text><line x1="250" y1="195" x2="480" y2="195" stroke="#ef4444" stroke-width="3" stroke-dasharray="8,4"/><text x="485" y="200" fill="#ef4444" font-size="11" font-weight="bold">STOP</text><line x1="250" y1="155" x2="480" y2="155" stroke="#10b981" stroke-width="3" stroke-dasharray="8,4"/><text x="485" y="160" fill="#10b981" font-size="11" font-weight="bold">TARGET</text><line x1="280" y1="223" x2="280" y2="190" stroke="#10b981" stroke-width="2"/><rect x="272" y="208" width="16" height="25" fill="#10b981"/><line x1="310" y1="195" x2="310" y2="160" stroke="#10b981" stroke-width="2"/><rect x="302" y="165" width="16" height="20" fill="#10b981"/><circle cx="310" cy="165" r="18" stroke="#3b82f6" stroke-width="3" fill="none"/><text x="310" y="135" fill="#3b82f6" font-size="16" font-weight="bold" text-anchor="middle">↓</text><text x="310" y="120" fill="#3b82f6" font-size="10" font-weight="bold" text-anchor="middle">Penetrating</text><text x="310" y="108" fill="#3b82f6" font-size="10" font-weight="bold" text-anchor="middle">with body</text><line x1="340" y1="170" x2="340" y2="150" stroke="#10b981" stroke-width="2"/><rect x="332" y="158" width="16" height="15" fill="#10b981"/></svg>
+                </div>
+
+                <button class="btn btn-purple" onclick="showScreen('start')" style="width: 100%; margin-top: 20px;">
+                    <span class="editable">↻ Start Over</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Scenario 3 -->
+        <div id="screen-scenario-3" class="hidden">
+            <div class="scenario-box">
+                <div class="scenario-title editable">Scenario 3: Green → Doji Near Top</div>
+                <div class="success-rate rate-very-likely editable">70% VERY LIKELY</div>
+                
+                <div class="info-section">
+                    <div class="info-label editable">Entry<svg width="50.4" height="50.4" viewBox="0 0 120 120" style="display: inline-block; vertical-align: middle; margin-right: 2px; margin-left: 2px;"><line x1="10" y1="60" x2="110" y2="60" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"></line><line x1="35" y1="60" x2="35" y2="72" stroke="#718096" stroke-width="2" stroke-linecap="round"></line><rect x="27" y="73" width="16" height="3" fill="#a0aec0" rx="1"></rect><rect x="27" y="73" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"></rect><line x1="35" y1="76" x2="35" y2="95" stroke="#718096" stroke-width="2" stroke-linecap="round"></line><line x1="75" y1="25" x2="75" y2="45" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line><rect x="65" y="45" width="20" height="40" fill="#48bb78" rx="2"></rect><rect x="65" y="45" width="20" height="40" fill="none" stroke="#38a169" stroke-width="2" rx="2"></rect><line x1="75" y1="85" x2="75" y2="105" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line></svg></div>
+                    <div class="info-text editable" id="entry-text-3">Wait for candle to finish forming. Once it closed, it should be penetrating the entry line which is the top of the doji wick</div>
+                </div>
+
+                <button class="tts-btn" onclick="readText(3)"><span class="editable">🔊 Read to me</span></button>
+
+                <div class="info-section">
+                    <div class="info-label editable">Stop Loss</div>
+                    <div class="info-text editable">20¢ below entry</div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-label editable">Take Profit</div>
+                    <div class="info-text editable">1:1 ratio (20¢ above entry)</div>
+                </div>
+
+                <div style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 15px; padding: 20px; margin: 20px 0;">
+                    <div style="text-align: center; color: #64748b; font-size: 0.95em; margin-bottom: 15px; font-weight: 600;">📈 Your chart should look similar to this:</div>
+                    <svg viewBox="0 0 500 280" style="width: 100%; height: auto;"><line x1="50" y1="235" x2="50" y2="190" stroke="#10b981" stroke-width="2"/><rect x="40" y="218" width="20" height="32" fill="#10b981"/><line x1="80" y1="200" x2="80" y2="155" stroke="#10b981" stroke-width="2"/><rect x="70" y="183" width="20" height="32" fill="#10b981"/><line x1="110" y1="165" x2="110" y2="120" stroke="#10b981" stroke-width="2"/><rect x="100" y="148" width="20" height="32" fill="#10b981"/><line x1="140" y1="130" x2="140" y2="90" stroke="#10b981" stroke-width="2"/><rect x="130" y="115" width="20" height="30" fill="#10b981"/><line x1="170" y1="108" x2="170" y2="83" stroke="#f59e0b" stroke-width="2"/><rect x="165" y="91" width="10" height="5" fill="#f59e0b"/><line x1="170" y1="96" x2="170" y2="118" stroke="#f59e0b" stroke-width="2"/><line x1="170" y1="83" x2="480" y2="83" stroke="#3b82f6" stroke-width="3" stroke-dasharray="8,4"/><text x="485" y="88" fill="#3b82f6" font-size="11" font-weight="bold">ENTRY</text><line x1="170" y1="103" x2="480" y2="103" stroke="#ef4444" stroke-width="3" stroke-dasharray="8,4"/><text x="485" y="108" fill="#ef4444" font-size="11" font-weight="bold">STOP</text><line x1="170" y1="63" x2="480" y2="63" stroke="#10b981" stroke-width="3" stroke-dasharray="8,4"/><text x="485" y="68" fill="#10b981" font-size="11" font-weight="bold">TARGET</text><line x1="195" y1="92" x2="195" y2="86" stroke="#10b981" stroke-width="1"/><rect x="192" y="87" width="6" height="4" fill="#10b981"/><line x1="220" y1="88" x2="220" y2="68" stroke="#10b981" stroke-width="2"/><rect x="213" y="78" width="14" height="18" fill="#10b981"/><line x1="250" y1="85" x2="250" y2="38" stroke="#10b981" stroke-width="2"/><rect x="242" y="63" width="16" height="40" fill="#10b981"/><text x="250" y="55" fill="#3b82f6" font-size="12" font-weight="bold" text-anchor="middle">↑</text><text x="250" y="30" fill="#3b82f6" font-size="11" font-weight="bold" text-anchor="middle">ENTER HERE</text></svg>
+                </div>
+
+                <button class="btn btn-purple" onclick="showScreen('start')" style="width: 100%; margin-top: 20px;">
+                    <span class="editable">↻ Start Over</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Scenario 4 -->
+        <div id="screen-scenario-4" class="hidden">
+            <div class="scenario-box">
+                <div class="scenario-title editable">Scenario 4: Green → Doji in Middle</div>
+                <div class="success-rate rate-should-work editable">Success rate: 80%<br></div>
+                
+                <div class="info-section">
+                    <div class="info-label editable">Entry<svg width="50.4" height="50.4" viewBox="0 0 120 120" style="display: inline-block; vertical-align: middle; margin-right: 2px; margin-left: 2px;"><line x1="10" y1="60" x2="110" y2="60" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"></line><line x1="35" y1="60" x2="35" y2="72" stroke="#718096" stroke-width="2" stroke-linecap="round"></line><rect x="27" y="73" width="16" height="3" fill="#a0aec0" rx="1"></rect><rect x="27" y="73" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"></rect><line x1="35" y1="76" x2="35" y2="95" stroke="#718096" stroke-width="2" stroke-linecap="round"></line><line x1="75" y1="25" x2="75" y2="45" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line><rect x="65" y="45" width="20" height="40" fill="#48bb78" rx="2"></rect><rect x="65" y="45" width="20" height="40" fill="none" stroke="#38a169" stroke-width="2" rx="2"></rect><line x1="75" y1="85" x2="75" y2="105" stroke="#38a169" stroke-width="2" stroke-linecap="round"></line></svg></div>
+                    <div class="info-text editable" id="entry-text-4">Wait for candle on the right of doji to Finish forming, once done, the candle should be penetrating entry line with its body</div>
+                </div>
+
+                <button class="tts-btn" onclick="readText(4)"><span class="editable">🔊 Read to me</span></button>
+
+                <div class="info-section">
+                    <div class="info-label editable">Stop Loss</div>
+                    <div class="info-text editable">Extended black line (EXT STOP)</div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-label editable">Take Profit</div>
+                    <div class="info-text editable">Original top of the move</div>
+                </div>
+
+                <div style="background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 15px; padding: 20px; margin: 20px 0;">
+                    <div style="text-align: center; color: #64748b; font-size: 0.95em; margin-bottom: 15px; font-weight: 600;">📈 Your chart should look similar to this:</div>
+                    <svg viewBox="0 0 500 280" style="width: 100%; height: auto;"><line x1="50" y1="245" x2="50" y2="195" stroke="#10b981" stroke-width="2"></line><rect x="40" y="225" width="20" height="40" fill="#10b981"></rect><line x1="80" y1="205" x2="80" y2="155" stroke="#10b981" stroke-width="2"></line><rect x="70" y="185" width="20" height="40" fill="#10b981"></rect><line x1="110" y1="165" x2="110" y2="115" stroke="#10b981" stroke-width="2"></line><rect x="100" y="145" width="20" height="40" fill="#10b981"></rect><line x1="140" y1="125" x2="140" y2="75" stroke="#10b981" stroke-width="2"></line><rect x="130" y="105" width="20" height="40" fill="#10b981"></rect><line x1="170" y1="175" x2="170" y2="150" stroke="#f59e0b" stroke-width="2"></line><rect x="165" y="158" width="10" height="5" fill="#f59e0b"></rect><line x1="170" y1="163" x2="170" y2="185" stroke="#f59e0b" stroke-width="2"></line><line x1="170" y1="150" x2="480" y2="150" stroke="#3b82f6" stroke-width="3" stroke-dasharray="8,4"></line><text x="485" y="155" fill="#3b82f6" font-size="11" font-weight="bold">ENTRY</text><line x1="170" y1="170" x2="480" y2="170" stroke="#ef4444" stroke-width="3" stroke-dasharray="8,4"></line><text x="485" y="175" fill="#ef4444" font-size="11" font-weight="bold">STOP</text><line x1="170" y1="190" x2="480" y2="190" stroke="#000000" stroke-width="2" stroke-dasharray="6,3"></line><text x="485" y="195" fill="#000000" font-size="10" font-weight="bold">EXT STOP</text><line x1="140" y1="75" x2="480" y2="75" stroke="#10b981" stroke-width="3" stroke-dasharray="8,4"></line><text x="485" y="80" fill="#10b981" font-size="11" font-weight="bold">TARGET</text><line x1="195" y1="162" x2="195" y2="157" stroke="#10b981" stroke-width="1"></line><rect x="192" y="158" width="6" height="3" fill="#10b981"></rect><line x1="220" y1="155" x2="220" y2="120" stroke="#10b981" stroke-width="2"></line><rect x="213" y="140" width="14" height="25" fill="#10b981"></rect><line x1="250" y1="125" x2="250" y2="95" stroke="#10b981" stroke-width="2"></line><rect x="244" y="110" width="12" height="20" fill="#10b981"></rect><line x1="280" y1="100" x2="280" y2="75" stroke="#10b981" stroke-width="2"></line><rect x="274" y="88" width="12" height="17" fill="#10b981"></rect><line x1="310" y1="80" x2="310" y2="60" stroke="#10b981" stroke-width="2"></line><rect x="304" y="70" width="12" height="15" fill="#10b981"></rect></svg>
+                </div>
+
+                <button class="btn btn-purple" onclick="showScreen('start')" style="width: 100%; margin-top: 20px;">
+                    <span class="editable">↻ Start Over</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isEditMode = false;
+        let originalContent = {};
+        let currentScreen = 'start';
+        let lastFocusedElement = null;
+        let emojiSize = 20; // Default size in pixels
+        let undoStack = [];
+        let redoStack = [];
+
+        // Store emoji SVG templates (will be dynamically sized)
+        function getEmojiTemplate(type, size) {
+            const templates = {
+                'doji': `<svg width="${size}" height="${size}" viewBox="0 0 100 100" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="50" y1="10" x2="50" y2="47" stroke="#718096" stroke-width="2" stroke-linecap="round"/><rect x="35" y="48" width="30" height="4" fill="#a0aec0" rx="1"/><rect x="35" y="48" width="30" height="4" fill="none" stroke="#718096" stroke-width="1.5" rx="1"/><line x1="50" y1="52" x2="50" y2="90" stroke="#718096" stroke-width="2" stroke-linecap="round"/></svg>`,
+                'green': `<svg width="${size}" height="${size}" viewBox="0 0 100 100" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="50" y1="10" x2="50" y2="30" stroke="#38a169" stroke-width="2" stroke-linecap="round"/><rect x="35" y="30" width="30" height="45" fill="#48bb78" rx="3"/><rect x="35" y="30" width="30" height="45" fill="none" stroke="#38a169" stroke-width="2" rx="3"/><line x1="50" y1="75" x2="50" y2="90" stroke="#38a169" stroke-width="2" stroke-linecap="round"/></svg>`,
+                'red': `<svg width="${size}" height="${size}" viewBox="0 0 100 100" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="50" y1="10" x2="50" y2="25" stroke="#c53030" stroke-width="2" stroke-linecap="round"/><rect x="35" y="25" width="30" height="50" fill="#fc8181" rx="3"/><rect x="35" y="25" width="30" height="50" fill="none" stroke="#c53030" stroke-width="2" rx="3"/><line x1="50" y1="75" x2="50" y2="90" stroke="#c53030" stroke-width="2" stroke-linecap="round"/></svg>`,
+                'green-penetrating': `<svg width="${size}" height="${size * 1.2}" viewBox="0 0 100 120" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="10" y1="60" x2="90" y2="60" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/><line x1="50" y1="20" x2="50" y2="40" stroke="#38a169" stroke-width="2" stroke-linecap="round"/><rect x="38" y="40" width="24" height="50" fill="#48bb78" rx="2"/><rect x="38" y="40" width="24" height="50" fill="none" stroke="#38a169" stroke-width="2" rx="2"/><line x1="50" y1="90" x2="50" y2="110" stroke="#38a169" stroke-width="2" stroke-linecap="round"/></svg>`,
+                'green-below': `<svg width="${size}" height="${size * 1.2}" viewBox="0 0 100 120" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="10" y1="30" x2="90" y2="30" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/><line x1="50" y1="35" x2="50" y2="55" stroke="#38a169" stroke-width="2" stroke-linecap="round"/><rect x="38" y="55" width="24" height="40" fill="#48bb78" rx="2"/><rect x="38" y="55" width="24" height="40" fill="none" stroke="#38a169" stroke-width="2" rx="2"/><line x1="50" y1="95" x2="50" y2="110" stroke="#38a169" stroke-width="2" stroke-linecap="round"/></svg>`,
+                'red-below': `<svg width="${size}" height="${size * 1.2}" viewBox="0 0 100 120" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="10" y1="30" x2="90" y2="30" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/><line x1="50" y1="35" x2="50" y2="50" stroke="#c53030" stroke-width="2" stroke-linecap="round"/><rect x="38" y="50" width="24" height="45" fill="#fc8181" rx="2"/><rect x="38" y="50" width="24" height="45" fill="none" stroke="#c53030" stroke-width="2" rx="2"/><line x1="50" y1="95" x2="50" y2="110" stroke="#c53030" stroke-width="2" stroke-linecap="round"/></svg>`,
+                'green-wick-penetrating': `<svg width="${size}" height="${size * 1.2}" viewBox="0 0 100 120" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="10" y1="50" x2="90" y2="50" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/><line x1="50" y1="25" x2="50" y2="60" stroke="#38a169" stroke-width="2" stroke-linecap="round"/><rect x="38" y="60" width="24" height="35" fill="#48bb78" rx="2"/><rect x="38" y="60" width="24" height="35" fill="none" stroke="#38a169" stroke-width="2" rx="2"/><line x1="50" y1="95" x2="50" y2="110" stroke="#38a169" stroke-width="2" stroke-linecap="round"/></svg>`,
+                'doji-green-below': `<svg width="${size * 1.2}" height="${size * 1.2}" viewBox="0 0 120 120" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="10" y1="30" x2="110" y2="30" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/><line x1="35" y1="35" x2="35" y2="52" stroke="#718096" stroke-width="2" stroke-linecap="round"/><rect x="27" y="53" width="16" height="3" fill="#a0aec0" rx="1"/><rect x="27" y="53" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"/><line x1="35" y1="56" x2="35" y2="75" stroke="#718096" stroke-width="2" stroke-linecap="round"/><line x1="75" y1="35" x2="75" y2="50" stroke="#38a169" stroke-width="2" stroke-linecap="round"/><rect x="65" y="50" width="20" height="35" fill="#48bb78" rx="2"/><rect x="65" y="50" width="20" height="35" fill="none" stroke="#38a169" stroke-width="2" rx="2"/><line x1="75" y1="85" x2="75" y2="100" stroke="#38a169" stroke-width="2" stroke-linecap="round"/></svg>`,
+                'near-the-top': `<svg width="${size * 1.8}" height="${size * 1.5}" viewBox="0 0 220 180" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="50" y1="75" x2="50" y2="90" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><rect x="30" y="90" width="40" height="50" fill="#48bb78" rx="3"/><rect x="30" y="90" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"/><line x1="50" y1="140" x2="50" y2="155" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><line x1="90" y1="25" x2="90" y2="40" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><rect x="70" y="40" width="40" height="50" fill="#48bb78" rx="3"/><rect x="70" y="40" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"/><line x1="90" y1="90" x2="90" y2="105" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><line x1="130" y1="0" x2="130" y2="0" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><rect x="110" y="0" width="40" height="40" fill="#48bb78" rx="3"/><rect x="110" y="0" width="40" height="40" fill="none" stroke="#38a169" stroke-width="3" rx="3"/><line x1="130" y1="40" x2="130" y2="55" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="0" x2="200" y2="0" stroke="#000000" stroke-width="2" stroke-dasharray="6,3" stroke-linecap="round"/><line x1="180" y1="0" x2="180" y2="15" stroke="#718096" stroke-width="2" stroke-linecap="round"/><rect x="172" y="16" width="16" height="3" fill="#a0aec0" rx="1"/><rect x="172" y="16" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"/><line x1="180" y1="19" x2="180" y2="35" stroke="#718096" stroke-width="2" stroke-linecap="round"/></svg>`,
+                'in-the-middle': `<svg width="${size * 2.5}" height="${size * 1.7}" viewBox="0 0 300 200" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="10" y1="125" x2="10" y2="140" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><rect x="-10" y="140" width="40" height="50" fill="#48bb78" rx="3"/><rect x="-10" y="140" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"/><line x1="10" y1="190" x2="10" y2="200" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><line x1="50" y1="75" x2="50" y2="90" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><rect x="30" y="90" width="40" height="50" fill="#48bb78" rx="3"/><rect x="30" y="90" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"/><line x1="50" y1="140" x2="50" y2="155" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><line x1="90" y1="25" x2="90" y2="40" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><rect x="70" y="40" width="40" height="50" fill="#48bb78" rx="3"/><rect x="70" y="40" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"/><line x1="90" y1="90" x2="90" y2="105" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><rect x="110" y="0" width="40" height="40" fill="#48bb78" rx="3"/><rect x="110" y="0" width="40" height="40" fill="none" stroke="#38a169" stroke-width="3" rx="3"/><line x1="130" y1="40" x2="130" y2="55" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><line x1="170" y1="25" x2="170" y2="40" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><rect x="150" y="40" width="40" height="50" fill="#48bb78" rx="3"/><rect x="150" y="40" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"/><line x1="170" y1="90" x2="170" y2="105" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><line x1="145" y1="65" x2="240" y2="65" stroke="#000000" stroke-width="2" stroke-dasharray="6,3" stroke-linecap="round"/><line x1="210" y1="65" x2="210" y2="84" stroke="#718096" stroke-width="2.5" stroke-linecap="round"/><rect x="200" y="85" width="20" height="4" fill="#a0aec0" rx="1"/><rect x="200" y="85" width="20" height="4" fill="none" stroke="#718096" stroke-width="2" rx="1"/><line x1="210" y1="89" x2="210" y2="108" stroke="#718096" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+                'lower-low-middle': `<svg width="${size * 2.9}" height="${size * 1.5}" viewBox="0 0 350 180" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="50" y1="75" x2="50" y2="90" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><rect x="30" y="90" width="40" height="50" fill="#48bb78" rx="3"/><rect x="30" y="90" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"/><line x1="50" y1="140" x2="50" y2="155" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><line x1="90" y1="25" x2="90" y2="40" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><rect x="70" y="40" width="40" height="50" fill="#48bb78" rx="3"/><rect x="70" y="40" width="40" height="50" fill="none" stroke="#38a169" stroke-width="3" rx="3"/><line x1="90" y1="90" x2="90" y2="105" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><rect x="110" y="0" width="40" height="40" fill="#48bb78" rx="3"/><rect x="110" y="0" width="40" height="40" fill="none" stroke="#38a169" stroke-width="3" rx="3"/><line x1="130" y1="40" x2="130" y2="55" stroke="#38a169" stroke-width="3" stroke-linecap="round"/><line x1="165" y1="10" x2="165" y2="19" stroke="#718096" stroke-width="2" stroke-linecap="round"/><rect x="157" y="20" width="16" height="3" fill="#a0aec0" rx="1"/><rect x="157" y="20" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"/><line x1="165" y1="23" x2="165" y2="32" stroke="#718096" stroke-width="2" stroke-linecap="round"/><line x1="190" y1="10" x2="190" y2="17" stroke="#c53030" stroke-width="2" stroke-linecap="round"/><rect x="182" y="17" width="16" height="9" fill="#fc8181" rx="1"/><rect x="182" y="17" width="16" height="9" fill="none" stroke="#c53030" stroke-width="1.5" rx="1"/><line x1="215" y1="20" x2="215" y2="30" stroke="#c53030" stroke-width="2" stroke-linecap="round"/><rect x="205" y="30" width="20" height="25" fill="#fc8181" rx="2"/><rect x="205" y="30" width="20" height="25" fill="none" stroke="#c53030" stroke-width="2" rx="2"/><line x1="215" y1="55" x2="215" y2="65" stroke="#c53030" stroke-width="2" stroke-linecap="round"/><text x="215" y="73" fill="#c53030" font-size="10" font-weight="bold" text-anchor="middle">LL1</text><line x1="245" y1="30" x2="245" y2="35" stroke="#38a169" stroke-width="2" stroke-linecap="round"/><rect x="235" y="35" width="20" height="15" fill="#48bb78" rx="2"/><rect x="235" y="35" width="20" height="15" fill="none" stroke="#38a169" stroke-width="2" rx="2"/><line x1="245" y1="50" x2="245" y2="55" stroke="#38a169" stroke-width="2" stroke-linecap="round"/><line x1="275" y1="45" x2="275" y2="50" stroke="#c53030" stroke-width="2" stroke-linecap="round"/><rect x="265" y="50" width="20" height="25" fill="#fc8181" rx="2"/><rect x="265" y="50" width="20" height="25" fill="none" stroke="#c53030" stroke-width="2" rx="2"/><line x1="275" y1="75" x2="275" y2="80" stroke="#c53030" stroke-width="2" stroke-linecap="round"/><text x="275" y="88" fill="#c53030" font-size="10" font-weight="bold" text-anchor="middle">LL2</text><line x1="270" y1="45" x2="340" y2="45" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6,3" stroke-linecap="round"/><line x1="305" y1="30" x2="305" y2="40" stroke="#38a169" stroke-width="2" stroke-linecap="round"/><rect x="295" y="40" width="20" height="25" fill="#48bb78" rx="2"/><rect x="295" y="40" width="20" height="25" fill="none" stroke="#38a169" stroke-width="2" rx="2"/><line x1="305" y1="65" x2="305" y2="75" stroke="#38a169" stroke-width="2" stroke-linecap="round"/></svg>`,
+                'lower-low-labeled': `<svg width="${size * 3.5}" height="${size * 1.6}" viewBox="0 0 450 200" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="30" y1="140" x2="30" y2="150" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"/><rect x="20" y="110" width="20" height="40" fill="#48bb78" rx="2"/><rect x="20" y="110" width="20" height="40" fill="none" stroke="#38a169" stroke-width="2" rx="2"/><line x1="30" y1="105" x2="30" y2="110" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"/><line x1="60" y1="95" x2="60" y2="105" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"/><rect x="50" y="65" width="20" height="40" fill="#48bb78" rx="2"/><rect x="50" y="65" width="20" height="40" fill="none" stroke="#38a169" stroke-width="2" rx="2"/><line x1="60" y1="55" x2="60" y2="65" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"/><line x1="90" y1="45" x2="90" y2="55" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"/><rect x="80" y="20" width="20" height="35" fill="#48bb78" rx="2"/><rect x="80" y="20" width="20" height="35" fill="none" stroke="#38a169" stroke-width="2" rx="2"/><line x1="90" y1="15" x2="90" y2="20" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"/><line x1="120" y1="35" x2="120" y2="45" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"/><rect x="110" y="10" width="20" height="35" fill="#48bb78" rx="2"/><rect x="110" y="10" width="20" height="35" fill="none" stroke="#38a169" stroke-width="2" rx="2"/><line x1="120" y1="5" x2="120" y2="10" stroke="#38a169" stroke-width="2.5" stroke-linecap="round"/><line x1="150" y1="5" x2="150" y2="20" stroke="#718096" stroke-width="2" stroke-linecap="round"/><rect x="145" y="20" width="10" height="2" fill="#a0aec0" rx="1"/><line x1="150" y1="22" x2="150" y2="37" stroke="#718096" stroke-width="2" stroke-linecap="round"/><line x1="175" y1="15" x2="175" y2="25" stroke="#c53030" stroke-width="2" stroke-linecap="round"/><rect x="168" y="25" width="14" height="35" fill="#fc8181" rx="2"/><rect x="168" y="25" width="14" height="35" fill="none" stroke="#c53030" stroke-width="2" rx="2"/><line x1="175" y1="60" x2="175" y2="70" stroke="#c53030" stroke-width="2" stroke-linecap="round"/><path d="M 165 80 L 165 85 L 185 85 L 185 80" stroke="#000000" stroke-width="1.5" fill="none"/><text x="175" y="95" fill="#000000" font-size="11" font-weight="bold" text-anchor="middle">L1</text><line x1="205" y1="55" x2="205" y2="60" stroke="#38a169" stroke-width="2" stroke-linecap="round"/><rect x="200" y="60" width="10" height="15" fill="#48bb78" rx="1"/><rect x="200" y="60" width="10" height="15" fill="none" stroke="#38a169" stroke-width="1.5" rx="1"/><line x1="205" y1="75" x2="205" y2="80" stroke="#38a169" stroke-width="2" stroke-linecap="round"/><line x1="230" y1="70" x2="230" y2="80" stroke="#c53030" stroke-width="2" stroke-linecap="round"/><rect x="222" y="80" width="16" height="50" fill="#fc8181" rx="2"/><rect x="222" y="80" width="16" height="50" fill="none" stroke="#c53030" stroke-width="2" rx="2"/><line x1="230" y1="130" x2="230" y2="145" stroke="#c53030" stroke-width="2" stroke-linecap="round"/><path d="M 218 155 L 218 160 L 242 160 L 242 155" stroke="#000000" stroke-width="1.5" fill="none"/><text x="230" y="172" fill="#000000" font-size="11" font-weight="bold" text-anchor="middle">LL</text><line x1="240" y1="130" x2="380" y2="130" stroke="#000000" stroke-width="2" stroke-dasharray="4,4" stroke-linecap="round"/><line x1="270" y1="125" x2="270" y2="133" stroke="#c53030" stroke-width="2" stroke-linecap="round"/><rect x="265" y="133" width="10" height="18" fill="#fc8181" rx="1"/><rect x="265" y="133" width="10" height="18" fill="none" stroke="#c53030" stroke-width="1.5" rx="1"/><line x1="270" y1="151" x2="270" y2="160" stroke="#c53030" stroke-width="2" stroke-linecap="round"/><line x1="295" y1="105" x2="295" y2="115" stroke="#38a169" stroke-width="2" stroke-linecap="round"/><rect x="288" y="115" width="14" height="30" fill="#48bb78" rx="2"/><rect x="288" y="115" width="14" height="30" fill="none" stroke="#38a169" stroke-width="2" rx="2"/><line x1="295" y1="145" x2="295" y2="155" stroke="#38a169" stroke-width="2" stroke-linecap="round"/></svg>`,
+                'pop-entry': `<svg width="${size * 1.6}" height="${size * 2.2}" viewBox="0 0 200 280" style="display:inline-block; vertical-align:middle; margin:0 2px;"><text x="100" y="40" fill="#000000" font-size="28" font-weight="900" text-anchor="middle">ENTRY</text><line x1="85" y1="55" x2="60" y2="95" stroke="#000000" stroke-width="6" stroke-linecap="round"/><path d="M 60 95 L 50 75 L 70 85 Z" fill="#000000"/><line x1="10" y1="140" x2="190" y2="140" stroke="#000000" stroke-width="3" stroke-dasharray="8,8" stroke-linecap="round"/><line x1="80" y1="145" x2="80" y2="160" stroke="#4a5568" stroke-width="4" stroke-linecap="round"/><rect x="60" y="160" width="40" height="90" fill="#ef4444" rx="3"/><rect x="60" y="160" width="40" height="90" fill="none" stroke="#991b1b" stroke-width="3" rx="3"/><line x1="80" y1="250" x2="80" y2="265" stroke="#4a5568" stroke-width="4" stroke-linecap="round"/><line x1="140" y1="80" x2="140" y2="100" stroke="#4a5568" stroke-width="4" stroke-linecap="round"/><rect x="120" y="100" width="40" height="80" fill="#48bb78" rx="3"/><rect x="120" y="100" width="40" height="80" fill="none" stroke="#38a169" stroke-width="3" rx="3"/><line x1="140" y1="180" x2="140" y2="195" stroke="#4a5568" stroke-width="4" stroke-linecap="round"/></svg>`,
+                'pop-ll-pattern': `<svg width="${size * 3.6}" height="${size * 2.2}" viewBox="0 0 450 280" style="display:inline-block; vertical-align:middle; margin:0 2px;"><text x="75" y="30" fill="#000000" font-size="20" font-weight="900" text-anchor="middle">1ST</text><text x="75" y="55" fill="#000000" font-size="18" font-weight="900" text-anchor="middle" text-decoration="underline">LOWER LOW</text><line x1="100" y1="65" x2="130" y2="95" stroke="#000000" stroke-width="5" stroke-linecap="round"/><path d="M 130 95 L 120 80 L 140 85 Z" fill="#000000"/><line x1="10" y1="85" x2="440" y2="85" stroke="#000000" stroke-width="2.5" stroke-dasharray="6,6" stroke-linecap="round"/><line x1="315" y1="35" x2="315" y2="275" stroke="#000000" stroke-width="3" stroke-linecap="round"/><line x1="145" y1="90" x2="145" y2="105" stroke="#4a5568" stroke-width="3" stroke-linecap="round"/><rect x="132" y="105" width="26" height="140" fill="#ef4444" rx="2"/><rect x="132" y="105" width="26" height="140" fill="none" stroke="#991b1b" stroke-width="2.5" rx="2"/><line x1="145" y1="245" x2="145" y2="260" stroke="#4a5568" stroke-width="3" stroke-linecap="round"/><line x1="185" y1="135" x2="185" y2="145" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"/><rect x="177" y="145" width="16" height="30" fill="#48bb78" rx="1.5"/><rect x="177" y="145" width="16" height="30" fill="none" stroke="#38a169" stroke-width="2" rx="1.5"/><line x1="185" y1="175" x2="185" y2="185" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"/><line x1="220" y1="155" x2="220" y2="165" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"/><rect x="210" y="165" width="20" height="70" fill="#ef4444" rx="2"/><rect x="210" y="165" width="20" height="70" fill="none" stroke="#991b1b" stroke-width="2" rx="2"/><line x1="220" y1="235" x2="220" y2="250" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"/><line x1="255" y1="175" x2="255" y2="185" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"/><rect x="247" y="185" width="16" height="50" fill="#ef4444" rx="1.5"/><rect x="247" y="185" width="16" height="50" fill="none" stroke="#991b1b" stroke-width="2" rx="1.5"/><line x1="255" y1="235" x2="255" y2="245" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"/><line x1="285" y1="155" x2="285" y2="165" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"/><rect x="277" y="165" width="16" height="50" fill="#48bb78" rx="1.5"/><rect x="277" y="165" width="16" height="50" fill="none" stroke="#38a169" stroke-width="2" rx="1.5"/><line x1="285" y1="215" x2="285" y2="230" stroke="#4a5568" stroke-width="2.5" stroke-linecap="round"/><line x1="335" y1="105" x2="335" y2="120" stroke="#4a5568" stroke-width="3" stroke-linecap="round"/><rect x="325" y="120" width="20" height="50" fill="#48bb78" rx="2"/><rect x="325" y="120" width="20" height="50" fill="none" stroke="#38a169" stroke-width="2.5" rx="2"/><line x1="335" y1="170" x2="335" y2="185" stroke="#4a5568" stroke-width="3" stroke-linecap="round"/><line x1="370" y1="65" x2="370" y2="80" stroke="#4a5568" stroke-width="3" stroke-linecap="round"/><rect x="360" y="80" width="20" height="70" fill="#48bb78" rx="2"/><rect x="360" y="80" width="20" height="70" fill="none" stroke="#38a169" stroke-width="2.5" rx="2"/><line x1="370" y1="150" x2="370" y2="165" stroke="#4a5568" stroke-width="3" stroke-linecap="round"/><circle cx="350" cy="205" r="18" fill="#10b981" stroke="#059669" stroke-width="2"/><path d="M 343 205 L 348 210 L 357 198" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="350" cy="245" r="18" fill="#ef4444" stroke="#991b1b" stroke-width="2"/><line x1="343" y1="238" x2="357" y2="252" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/><line x1="357" y1="238" x2="343" y2="252" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/><text x="415" y="130" fill="#000000" font-size="20" font-weight="900" text-anchor="middle">ENTRY</text><line x1="395" y1="110" x2="380" y2="95" stroke="#000000" stroke-width="5" stroke-linecap="round"/><path d="M 380 95 L 395 90 L 390 105 Z" fill="#000000"/></svg>`,
+                'two-green-stacked': `<svg width="${size * 1.2}" height="${size * 1.5}" viewBox="0 0 120 160" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="35" y1="20" x2="95" y2="20" stroke="#000000" stroke-width="2" stroke-dasharray="6,3" stroke-linecap="round"/><line x1="55" y1="25" x2="55" y2="35" stroke="#38a169" stroke-width="2" stroke-linecap="round"/><rect x="45" y="35" width="20" height="30" fill="#48bb78" rx="2"/><rect x="45" y="35" width="20" height="30" fill="none" stroke="#38a169" stroke-width="2" rx="2"/><line x1="55" y1="65" x2="55" y2="75" stroke="#38a169" stroke-width="2" stroke-linecap="round"/><line x1="35" y1="85" x2="35" y2="100" stroke="#38a169" stroke-width="2" stroke-linecap="round"/><rect x="20" y="100" width="30" height="45" fill="#48bb78" rx="2"/><rect x="20" y="100" width="30" height="45" fill="none" stroke="#38a169" stroke-width="2" rx="2"/><line x1="35" y1="145" x2="35" y2="155" stroke="#38a169" stroke-width="2" stroke-linecap="round"/></svg>`,
+                'doji-red-below': `<svg width="${size * 1.2}" height="${size * 1.2}" viewBox="0 0 120 120" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="10" y1="30" x2="110" y2="30" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/><line x1="35" y1="35" x2="35" y2="52" stroke="#718096" stroke-width="2" stroke-linecap="round"/><rect x="27" y="53" width="16" height="3" fill="#a0aec0" rx="1"/><rect x="27" y="53" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"/><line x1="35" y1="56" x2="35" y2="75" stroke="#718096" stroke-width="2" stroke-linecap="round"/><line x1="75" y1="35" x2="75" y2="48" stroke="#c53030" stroke-width="2" stroke-linecap="round"/><rect x="65" y="48" width="20" height="38" fill="#fc8181" rx="2"/><rect x="65" y="48" width="20" height="38" fill="none" stroke="#c53030" stroke-width="2" rx="2"/><line x1="75" y1="86" x2="75" y2="100" stroke="#c53030" stroke-width="2" stroke-linecap="round"/></svg>`,
+                'doji-green-body-penetrating': `<svg width="${size * 1.2}" height="${size * 1.2}" viewBox="0 0 120 120" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="10" y1="60" x2="110" y2="60" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/><line x1="35" y1="60" x2="35" y2="72" stroke="#718096" stroke-width="2" stroke-linecap="round"/><rect x="27" y="73" width="16" height="3" fill="#a0aec0" rx="1"/><rect x="27" y="73" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"/><line x1="35" y1="76" x2="35" y2="95" stroke="#718096" stroke-width="2" stroke-linecap="round"/><line x1="75" y1="25" x2="75" y2="45" stroke="#38a169" stroke-width="2" stroke-linecap="round"/><rect x="65" y="45" width="20" height="40" fill="#48bb78" rx="2"/><rect x="65" y="45" width="20" height="40" fill="none" stroke="#38a169" stroke-width="2" rx="2"/><line x1="75" y1="85" x2="75" y2="105" stroke="#38a169" stroke-width="2" stroke-linecap="round"/></svg>`,
+                'doji-green-wick-penetrating': `<svg width="${size * 1.2}" height="${size * 1.2}" viewBox="0 0 120 120" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="10" y1="60" x2="110" y2="60" stroke="#3b82f6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/><line x1="35" y1="60" x2="35" y2="72" stroke="#718096" stroke-width="2" stroke-linecap="round"/><rect x="27" y="73" width="16" height="3" fill="#a0aec0" rx="1"/><rect x="27" y="73" width="16" height="3" fill="none" stroke="#718096" stroke-width="1.5" rx="1"/><line x1="35" y1="76" x2="35" y2="95" stroke="#718096" stroke-width="2" stroke-linecap="round"/><line x1="75" y1="35" x2="75" y2="65" stroke="#38a169" stroke-width="2" stroke-linecap="round"/><rect x="65" y="65" width="20" height="30" fill="#48bb78" rx="2"/><rect x="65" y="65" width="20" height="30" fill="none" stroke="#38a169" stroke-width="2" rx="2"/><line x1="75" y1="95" x2="75" y2="105" stroke="#38a169" stroke-width="2" stroke-linecap="round"/></svg>`,
+                'red-green-lower-low': `<svg width="${size * 1.25}" height="${size * 1.7}" viewBox="0 0 150 200" style="display:inline-block; vertical-align:middle; margin:0 2px;"><line x1="10" y1="65" x2="140" y2="65" stroke="#8b5cf6" stroke-width="3" stroke-dasharray="6,4" stroke-linecap="round"/><line x1="75" y1="35" x2="75" y2="60" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/><path d="M 75 60 L 70 53 L 80 53 Z" fill="#f59e0b"/><line x1="50" y1="65" x2="50" y2="75" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/><rect x="40" y="75" width="20" height="60" fill="#ef4444" rx="2"/><rect x="40" y="75" width="20" height="60" fill="none" stroke="#dc2626" stroke-width="2.5" rx="2"/><line x1="50" y1="135" x2="50" y2="145" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="65" x2="100" y2="75" stroke="#10b981" stroke-width="3" stroke-linecap="round"/><rect x="90" y="75" width="20" height="60" fill="#10b981" rx="2"/><rect x="90" y="75" width="20" height="60" fill="none" stroke="#059669" stroke-width="2.5" rx="2"/><line x1="100" y1="135" x2="100" y2="145" stroke="#10b981" stroke-width="3" stroke-linecap="round"/><text x="75" y="165" fill="#f59e0b" font-size="14" font-weight="bold" text-anchor="middle" font-family="monospace">LOWER LOW</text></svg>`
+            };
+            return templates[type];
+        }
+
+        // Update emoji size from slider
+        function updateEmojiSize(value) {
+            emojiSize = parseInt(value);
+            document.getElementById('sizeValue').textContent = value + 'px';
+        }
+
+        // Insert emoji at cursor position
+        function insertEmoji(emojiType) {
+            const emoji = getEmojiTemplate(emojiType, emojiSize);
+            
+            if (lastFocusedElement && lastFocusedElement.contentEditable === 'true') {
+                lastFocusedElement.focus();
+                document.execCommand('insertHTML', false, emoji);
+            } else {
+                alert('Click on some text first, then click the emoji to insert it!');
+            }
+        }
+
+        // Track which element is focused
+        document.addEventListener('focusin', function(e) {
+            if (e.target.classList.contains('editable') && e.target.contentEditable === 'true') {
+                lastFocusedElement = e.target;
+            }
+        });
+        
+        // Add keyboard shortcuts for undo/redo
+        document.addEventListener('keydown', function(e) {
+            // Only in edit mode
+            if (!isEditMode) return;
+            
+            // Ctrl+Z or Cmd+Z for Undo
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+                e.preventDefault();
+                undoEdit();
+            }
+            
+            // Ctrl+Y or Cmd+Shift+Z for Redo
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+                e.preventDefault();
+                redoEdit();
+            }
+        });
+
+        // Show/hide screens
+        function showScreen(screenName) {
+            // Save any changes if in edit mode
+            if (isEditMode) {
+                alert('Please save or cancel your changes first!');
+                return;
+            }
+
+            // Hide all screens
+            const screens = document.querySelectorAll('[id^="screen-"]');
+            screens.forEach(screen => screen.classList.add('hidden'));
+
+            // Show selected screen
+            document.getElementById(`screen-${screenName}`).classList.remove('hidden');
+            currentScreen = screenName;
+
+            // Load saved content for this screen
+            loadScreenContent(screenName);
+        }
+
+        // Toggle edit mode
+        // Toggle side menu
+        function toggleMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            const menuOverlay = document.getElementById('menuOverlay');
+            sideMenu.classList.toggle('open');
+            menuOverlay.classList.toggle('open');
+        }
+        
+        function openInSafari() {
+            // Get the current page URL
+            const currentUrl = window.location.href;
+            
+            // Open in Safari (or default browser)
+            // This forces it to open in the browser instead of the standalone app
+            window.location.href = currentUrl;
+        }
+
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const editables = document.querySelectorAll('.editable');
+            const editControls = document.getElementById('editControls');
+            const emojiToolbar = document.getElementById('emojiToolbar');
+
+            if (isEditMode) {
+                // Clear undo/redo stacks when entering edit mode
+                undoStack = [];
+                redoStack = [];
+                updateUndoRedoButtons();
+                
+                // Save original content
+                editables.forEach(el => {
+                    const id = el.id || `text-${Math.random()}`;
+                    el.id = id;
+                    originalContent[id] = el.innerHTML;
+                    el.contentEditable = 'true';
+                    el.draggable = true;
+                    
+                    // Fix cursor and selection issues
+                    el.style.cursor = 'text';
+                    el.spellcheck = false; // Disable spellcheck for cleaner editing
+                    
+                    // Add click handler to ensure focus
+                    el.addEventListener('click', function(e) {
+                        this.focus();
+                        e.stopPropagation();
+                    });
+                    
+                    // Track changes for undo/redo
+                    let typingTimer;
+                    el.addEventListener('input', function() {
+                        // Save state after user stops typing for 500ms
+                        clearTimeout(typingTimer);
+                        typingTimer = setTimeout(() => {
+                            saveStateToUndo();
+                        }, 500);
+                    });
+                    
+                    // Save state before user starts typing
+                    el.addEventListener('focus', function() {
+                        if (undoStack.length === 0) {
+                            saveStateToUndo();
+                        }
+                    });
+                });
+
+                editControls.classList.add('active');
+                emojiToolbar.classList.add('active');
+                
+                // Add drag listeners
+                addDragListeners();
+            } else {
+                // Disable editing
+                editables.forEach(el => {
+                    el.contentEditable = 'false';
+                    el.draggable = false;
+                    el.style.cursor = '';
+                });
+
+                editControls.classList.remove('active');
+                emojiToolbar.classList.remove('active');
+                lastFocusedElement = null;
+                
+                // Remove drag listeners
+                removeDragListeners();
+                
+                // Clear undo/redo when exiting edit mode
+                undoStack = [];
+                redoStack = [];
+            }
+        }
+
+        let draggedElement = null;
+
+        function addDragListeners() {
+            const editables = document.querySelectorAll('.editable');
+            editables.forEach(el => {
+                el.addEventListener('dragstart', handleDragStart);
+                el.addEventListener('dragover', handleDragOver);
+                el.addEventListener('drop', handleDrop);
+                el.addEventListener('dragend', handleDragEnd);
+                el.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+
+        function removeDragListeners() {
+            const editables = document.querySelectorAll('.editable');
+            editables.forEach(el => {
+                el.removeEventListener('dragstart', handleDragStart);
+                el.removeEventListener('dragover', handleDragOver);
+                el.removeEventListener('drop', handleDrop);
+                el.removeEventListener('dragend', handleDragEnd);
+                el.removeEventListener('dragleave', handleDragLeave);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            
+            if (this !== draggedElement) {
+                this.classList.add('drag-over');
+            }
+            
+            return false;
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            
+            if (draggedElement !== this) {
+                // Swap the elements' content
+                const draggedHTML = draggedElement.innerHTML;
+                const targetHTML = this.innerHTML;
+                
+                draggedElement.innerHTML = targetHTML;
+                this.innerHTML = draggedHTML;
+            }
+            
+            this.classList.remove('drag-over');
+            
+            return false;
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            
+            const editables = document.querySelectorAll('.editable');
+            editables.forEach(el => {
+                el.classList.remove('drag-over');
+            });
+        }
+
+        // Save changes
+        function saveChanges() {
+            const screenData = {};
+            const editables = document.querySelectorAll('.editable');
+
+            editables.forEach((el, index) => {
+                // Use existing ID or create a unique one based on position
+                const elementId = el.id || `editable-${currentScreen}-${index}`;
+                
+                // If element doesn't have an ID, assign it one so we can track it
+                if (!el.id) {
+                    el.id = elementId;
+                }
+                
+                screenData[elementId] = el.innerHTML;
+            });
+
+            // Save to localStorage
+            localStorage.setItem(`screen-${currentScreen}`, JSON.stringify(screenData));
+
+            // Exit edit mode
+            toggleEditMode();
+
+            alert('Changes saved! ✅');
+        }
+
+        // Cancel edit
+        function cancelEdit() {
+            // Restore original content
+            Object.keys(originalContent).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.innerHTML = originalContent[id];
+                }
+            });
+
+            // Exit edit mode
+            toggleEditMode();
+
+            originalContent = {};
+            undoStack = [];
+            redoStack = [];
+        }
+        
+        // Save current state to undo stack
+        function saveStateToUndo() {
+            const currentState = {};
+            const editables = document.querySelectorAll('.editable');
+            
+            editables.forEach(el => {
+                if (el.id) {
+                    currentState[el.id] = el.innerHTML;
+                }
+            });
+            
+            undoStack.push(currentState);
+            redoStack = []; // Clear redo stack when new action is made
+            
+            // Update button states
+            updateUndoRedoButtons();
+        }
+        
+        // Undo function
+        function undoEdit() {
+            if (undoStack.length === 0) return;
+            
+            // Save current state to redo stack
+            const currentState = {};
+            const editables = document.querySelectorAll('.editable');
+            editables.forEach(el => {
+                if (el.id) {
+                    currentState[el.id] = el.innerHTML;
+                }
+            });
+            redoStack.push(currentState);
+            
+            // Restore previous state
+            const previousState = undoStack.pop();
+            Object.keys(previousState).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.innerHTML = previousState[id];
+                }
+            });
+            
+            updateUndoRedoButtons();
+        }
+        
+        // Redo function
+        function redoEdit() {
+            if (redoStack.length === 0) return;
+            
+            // Save current state to undo stack
+            const currentState = {};
+            const editables = document.querySelectorAll('.editable');
+            editables.forEach(el => {
+                if (el.id) {
+                    currentState[el.id] = el.innerHTML;
+                }
+            });
+            undoStack.push(currentState);
+            
+            // Restore next state
+            const nextState = redoStack.pop();
+            Object.keys(nextState).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.innerHTML = nextState[id];
+                }
+            });
+            
+            updateUndoRedoButtons();
+        }
+        
+        // Update undo/redo button states
+        function updateUndoRedoButtons() {
+            const undoBtn = document.getElementById('undoBtn');
+            const redoBtn = document.getElementById('redoBtn');
+            
+            undoBtn.disabled = undoStack.length === 0;
+            redoBtn.disabled = redoStack.length === 0;
+        }
+
+        // Load saved screen content
+        function loadScreenContent(screenName) {
+            const saved = localStorage.getItem(`screen-${screenName}`);
+            if (saved) {
+                const data = JSON.parse(saved);
+                Object.keys(data).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.innerHTML = data[id];
+                    }
+                });
+            }
+        }
+
+        function captureScreen() {
+            // Get current visible screen (excluding controls)
+            const screens = document.querySelectorAll('#screen-start, #screen-green-path, #screen-red-path, #screen-another-doji, #screen-scenario-1, #screen-scenario-2, #screen-scenario-3, #screen-scenario-4');
+            let currentScreen = null;
+            
+            for (let screen of screens) {
+                if (!screen.classList.contains('hidden')) {
+                    currentScreen = screen;
+                    break;
+                }
+            }
+            
+            if (!currentScreen) {
+                alert('No content screen visible! Navigate to a page first.');
+                return;
+            }
+
+            const screenName = currentScreen.id.replace('screen-', '');
+            const screenHTML = currentScreen.innerHTML;
+            
+            // Create capture data
+            const captureData = {
+                screen: screenName,
+                timestamp: new Date().toISOString(),
+                html: screenHTML
+            };
+            
+            // Convert to JSON string
+            const captureText = JSON.stringify(captureData, null, 2);
+            
+            // Always show textarea for copying
+            const overlay = document.createElement('div');
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.background = 'rgba(0,0,0,0.8)';
+            overlay.style.zIndex = '9999';
+            overlay.style.display = 'flex';
+            overlay.style.flexDirection = 'column';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+            overlay.style.padding = '20px';
+            
+            const title = document.createElement('div');
+            title.textContent = '📸 Screen: ' + screenName;
+            title.style.color = 'white';
+            title.style.fontSize = '20px';
+            title.style.fontWeight = 'bold';
+            title.style.marginBottom = '15px';
+            
+            const instructions = document.createElement('div');
+            instructions.textContent = 'Select all text below and copy it:';
+            instructions.style.color = '#10b981';
+            instructions.style.fontSize = '14px';
+            instructions.style.marginBottom = '10px';
+            
+            const textarea = document.createElement('textarea');
+            textarea.value = captureText;
+            textarea.style.width = '90%';
+            textarea.style.maxWidth = '600px';
+            textarea.style.height = '300px';
+            textarea.style.background = 'white';
+            textarea.style.border = '3px solid #667eea';
+            textarea.style.padding = '15px';
+            textarea.style.fontSize = '12px';
+            textarea.style.fontFamily = 'monospace';
+            textarea.style.borderRadius = '8px';
+            textarea.readOnly = true;
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '✕ Close';
+            closeBtn.style.marginTop = '15px';
+            closeBtn.style.padding = '12px 30px';
+            closeBtn.style.background = '#ef4444';
+            closeBtn.style.color = 'white';
+            closeBtn.style.border = 'none';
+            closeBtn.style.borderRadius = '8px';
+            closeBtn.style.fontSize = '16px';
+            closeBtn.style.fontWeight = 'bold';
+            closeBtn.style.cursor = 'pointer';
+            
+            closeBtn.onclick = () => {
+                document.body.removeChild(overlay);
+            };
+            
+            overlay.appendChild(title);
+            overlay.appendChild(instructions);
+            overlay.appendChild(textarea);
+            overlay.appendChild(closeBtn);
+            document.body.appendChild(overlay);
+            
+            // Auto-select the text
+            textarea.select();
+            textarea.setSelectionRange(0, textarea.value.length);
+        }
+
+        // Text-to-speech
+        function readText(scenarioNum) {
+            const textElement = document.getElementById(`entry-text-${scenarioNum}`);
+            const text = textElement.textContent;
+            
+            // Cancel any ongoing speech
+            window.speechSynthesis.cancel();
+
+            // Create speech
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+
+            // Speak
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Load content on page load
+        window.addEventListener('load', () => {
+            loadScreenContent('start');
+            updateClock();
+            setInterval(updateClock, 1000);
+        });
+
+        // Update clock with 15-second candle alerts
+        let lastWarningState = false;
+        let audioContext = null;
+        
+        // Initialize audio context on first user interaction
+        document.addEventListener('click', function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }, { once: true });
+        
+        function playBeep() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800; // Frequency in Hz (higher = higher pitch)
+            oscillator.type = 'sine'; // Sine wave for smooth beep
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime); // Volume
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.2); // 200ms beep
+        }
+        
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            
+            // Convert to 12-hour format
+            hours = hours % 12;
+            hours = hours ? hours : 12; // 0 should be 12
+            
+            // Format with leading zeros
+            const hoursStr = String(hours).padStart(2, '0');
+            const minutesStr = String(minutes).padStart(2, '0');
+            const secondsStr = String(seconds).padStart(2, '0');
+            
+            const timeStr = `${hoursStr}:${minutesStr}:${secondsStr} ${ampm}`;
+            const timeDisplay = document.getElementById('timeDisplay');
+            const clockEl = document.getElementById('liveClock');
+            
+            timeDisplay.textContent = timeStr;
+            
+            // Remove all classes first
+            clockEl.classList.remove('warning', 'flash');
+            
+            let isWarning = false;
+            
+            // Check for 15-second boundaries (0, 15, 30, 45)
+            if (seconds === 0 || seconds === 15 || seconds === 30 || seconds === 45) {
+                clockEl.classList.add('flash');
+            }
+            // Warning 5 seconds before each boundary (10-14, 25-29, 40-44, 55-59)
+            else if (
+                (seconds >= 10 && seconds <= 14) ||
+                (seconds >= 25 && seconds <= 29) ||
+                (seconds >= 40 && seconds <= 44) ||
+                (seconds >= 55 && seconds <= 59)
+            ) {
+                clockEl.classList.add('warning');
+                isWarning = true;
+                
+                // Beep EVERY second during warning period
+                playBeep();
+                
+                // Also try vibration for Android users (only on first warning second)
+                if (!lastWarningState && navigator.vibrate) {
+                    navigator.vibrate([200, 100, 200]);
+                }
+            }
+            
+            lastWarningState = isWarning;
+        }
+    </script>
+</body>
+</html>
